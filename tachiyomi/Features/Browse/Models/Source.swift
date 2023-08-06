@@ -10,6 +10,7 @@ import Foundation
 enum Source: CaseIterable, Codable {
     case senManga
     case ganma
+    case booklive
     
     var name: String {
         switch self {
@@ -17,12 +18,14 @@ enum Source: CaseIterable, Codable {
             return "Sen Manga"
         case .ganma:
             return "Ganma"
+        case .booklive:
+            return "Booklive"
         }
     }
     
     var language: Language {
         switch self {
-        case .senManga, .ganma:
+        case .senManga, .ganma, .booklive:
             return .ja
         }
     }
@@ -33,6 +36,8 @@ enum Source: CaseIterable, Codable {
             return [.popular, .latest]
         case .ganma:
             return [.popular]
+        case .booklive:
+            return [.popular, .latest]
         }
     }
     
@@ -42,6 +47,8 @@ enum Source: CaseIterable, Codable {
             return "sen-manga-logo"
         case .ganma:
             return "ganma-logo"
+        case .booklive:
+            return "booklive-logo"
         }
     }
 }

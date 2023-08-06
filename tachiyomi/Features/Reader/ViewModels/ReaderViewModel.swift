@@ -52,6 +52,8 @@ extension ReaderViewModel {
                 guard let page = chapter.value?.ganmaPage else { return }
                 let fetchedPages = Ganma.shared.getChapterPages(from: page)
                 pages.accept(fetchedPages)
+            case .booklive:
+                return 
             }
         }
     }

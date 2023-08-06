@@ -111,11 +111,39 @@ extension SourceManga {
         self.author = magazine.author.penName
         self.description = magazine.description
         self.genres = []
-        self.status = magazine.flags.isFinish ?? false ? .completed : .ongoing
+        self.status = magazine.flags.isFinished ?? false ? .completed : .ongoing
         self.thumbnailURL = magazine.squareImage.url
         self.updateStrategy = nil
         self.isInitialized = true
         self.chapters = magazine.items.enumerated().map({ $0.element.toChapter(at: $0.offset) })
         self.source = .ganma
+    }
+}
+// MARK: - Booklife
+extension SourceManga {
+    init(from data: BooklifeMangaOverview) {
+        self.url = data.getURL()
+        self.title = data.titleVolName
+        self.author = data.authors.first?.name
+        self.genres = []    // we will do this later
+        self.status = .unknown
+        self.thumbnailURL = "\(Booklife.shared.thumbnailBaseURL)\(String(data.titleID))/\(data.volNo)/thumbnail/2L.jpg"
+        self.updateStrategy = nil
+        self.isInitialized = true
+        self.chapters = []
+        self.source = .booklive
+    }
+    init(from data: BookLifeMangaDetailsTitleList) {
+        self.url = data.getURL()
+        self.title = data.getTitle()
+        self.author = data.getAuthor()
+        self.description = data.getDescription()
+        self.genres = data.getGenres()
+        self.status = .unknown
+        self.thumbnailURL = data.getThumbnailURL()
+        self.updateStrategy = nil
+        self.isInitialized = true
+        self.chapters = data.getChapters()
+        self.source = .booklive
     }
 }

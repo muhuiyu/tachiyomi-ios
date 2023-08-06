@@ -35,18 +35,8 @@ class ConfigurableSource: SourceProtocol {
     
     // MARK: - Get popular manga
     func getPopularManga(at page: Int) async -> MangaPage {
-        guard let request = getPopularMangaRequest(at: page) else {
-            return MangaPage(mangas: [], hasNextPage: false)
-        }
-        do {
-            let (data, _) = try await URLSession.shared.data(for: request)
-            let mangas = parsePopularManga(from: data)
-            // Ganma doesn't have next page
-            return MangaPage(mangas: mangas, hasNextPage: false)
-        } catch {
-            print("An error occurred: \(error)")
-            return MangaPage(mangas: [], hasNextPage: false)
-        }
+        // Should be implemented in subclass
+        return MangaPage(mangas: [], hasNextPage: false)
     }
     
     func parsePopularManga(from data: Data) -> [SourceManga] {

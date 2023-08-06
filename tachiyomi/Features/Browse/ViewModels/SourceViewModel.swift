@@ -45,6 +45,11 @@ extension SourceViewModel {
                 sourceMangas.accept(sourceMangas.value + result.mangas)
                 hasNextPage = result.hasNextPage
                 isLoading.accept(false)
+            case .booklive:
+                let result = await Booklife.shared.getPopularManga(at: currentPage)
+                sourceMangas.accept(sourceMangas.value + result.mangas)
+                hasNextPage = result.hasNextPage
+                isLoading.accept(false)
             }
         }
     }

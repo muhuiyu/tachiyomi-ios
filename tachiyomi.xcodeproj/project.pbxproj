@@ -78,6 +78,7 @@
 		E46B12F12A7DBE1E003E4C1D /* ReaderNoPageFoundViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E46B12F02A7DBE1E003E4C1D /* ReaderNoPageFoundViewController.swift */; };
 		E4C27C5D2A7E2F1F00372B8D /* Ganma.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4C27C5C2A7E2F1F00372B8D /* Ganma.swift */; };
 		E4C27C5F2A7E984700372B8D /* ConfigurableSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4C27C5E2A7E984700372B8D /* ConfigurableSource.swift */; };
+		E4C27C632A7F2DCE00372B8D /* Booklife.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4C27C622A7F2DCE00372B8D /* Booklife.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -148,6 +149,7 @@
 		E46B12F02A7DBE1E003E4C1D /* ReaderNoPageFoundViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReaderNoPageFoundViewController.swift; sourceTree = "<group>"; };
 		E4C27C5C2A7E2F1F00372B8D /* Ganma.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ganma.swift; sourceTree = "<group>"; };
 		E4C27C5E2A7E984700372B8D /* ConfigurableSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurableSource.swift; sourceTree = "<group>"; };
+		E4C27C622A7F2DCE00372B8D /* Booklife.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Booklife.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -301,6 +303,7 @@
 				E4C27C5E2A7E984700372B8D /* ConfigurableSource.swift */,
 				E46B12C82A7C6288003E4C1D /* SourceProtocol.swift */,
 				E46B12C62A7C625A003E4C1D /* SenManga.swift */,
+				E4C27C622A7F2DCE00372B8D /* Booklife.swift */,
 				E4C27C5C2A7E2F1F00372B8D /* Ganma.swift */,
 			);
 			path = "Data provider";
@@ -680,6 +683,7 @@
 				E46B129C2A7C49D6003E4C1D /* UpdatesViewController.swift in Sources */,
 				E46B12AB2A7C4B38003E4C1D /* HistoryViewModel.swift in Sources */,
 				E46B129E2A7C4A16003E4C1D /* Base.swift in Sources */,
+				E4C27C632A7F2DCE00372B8D /* Booklife.swift in Sources */,
 				E46B128D2A7C4889003E4C1D /* YearMonthDay.swift in Sources */,
 				E46B12B42A7C530F003E4C1D /* SourceViewModel.swift in Sources */,
 				E46B12C32A7C5FC4003E4C1D /* ParseHTTPSource.swift in Sources */,

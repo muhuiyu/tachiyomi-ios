@@ -27,6 +27,21 @@ class Ganma: ConfigurableSource {
         return "https://ganma.jp"
     }
     
+    override func getPopularManga(at page: Int) async -> MangaPage {
+        guard let request = getPopularMangaRequest(at: page) else {
+            return MangaPage(mangas: [], hasNextPage: false)
+        }
+        do {
+            let (data, _) = try await URLSession.shared.data(for: request)
+            let mangas = parsePopularManga(from: data)
+            // Ganma doesn't have next page
+            return MangaPage(mangas: mangas, hasNextPage: false)
+        } catch {
+            print("An error occurred: \(error)")
+            return MangaPage(mangas: [], hasNextPage: false)
+        }
+    }
+    
     override func getPopularMangaRequest(at page: Int) -> URLRequest? {
         let url: URL?
         switch page {
@@ -77,7 +92,7 @@ class Ganma: ConfigurableSource {
     func getChapterPages(from chapter: GanmaMagazinePage) -> [ChapterPage] {
         return chapter.files
             .enumerated()
-            .map({ ChapterPage(pageNumber: $0.offset, imageURL: "\(chapter.baseUrl)\($0.element)?\(chapter.token)") })
+            .map({ ChapterPage(pageNumber: $0.offset, imageURL: "\(chapter.baseURL)\($0.element)?\(chapter.token)") })
     }
 }
 
@@ -115,9 +130,13 @@ struct GanmaAuthor: Codable {
 struct GanmaSeries: Codable {
     let id: String
     let title: String
-    let squareImageUrl: String
+    let squareImageURL: String
     
-    // TODO: - Change URL codingKeys
+    enum CodingKeys: String, CodingKey {
+        case id
+        case title
+        case squareImageURL = "squareImageUrl"
+    }
 }
 
 struct GanmaMangaDetailsData: Codable {
@@ -158,12 +177,27 @@ struct GanmaMagazineFlags: Codable {
     let isEveryOtherWeek: Bool?
     let isThreeConsecutiveWeeks: Bool?
     let isMonthly: Bool?
-    let isFinish: Bool?
+    let isFinished: Bool?
+    
+    enum CodingKeys: String, CodingKey {
+        case isSunday
+        case isMonday
+        case isTuesday
+        case isWednesday
+        case isThursday
+        case isFriday
+        case isSaturday
+        case isWeekly
+        case isEveryOtherWeek
+        case isThreeConsecutiveWeeks
+        case isMonthly
+        case isFinished = "isFinish"
+    }
 }
 
 struct GanmaMagazineStoryItem: Codable {
     let id: String?
-    let storyId: String?
+    let storyID: String?
     let title: String
     let subtitle: String?
     let releaseStart: Int
@@ -172,12 +206,24 @@ struct GanmaMagazineStoryItem: Codable {
     let page: GanmaMagazinePage
     let afterwordImage: GanmaFile?
     
+    enum CodingKeys: String, CodingKey {
+        case id
+        case storyID = "storyId"
+        case title
+        case subtitle
+        case releaseStart
+        case releaseForFree
+        case kind
+        case page
+        case afterwordImage
+    }
+    
     func toChapter(at index: Int) -> SourceChapter {
         var name = title
         if let subtitle = subtitle {
             name += "- \(subtitle)"
         }
-        return SourceChapter(url: page.baseUrl,
+        return SourceChapter(url: page.baseURL,
                              name: name,
                              uploadedDate: getReleaseDateString(),
                              chapterNumber: String(index+1),
@@ -197,9 +243,16 @@ struct GanmaMagazineStoryItem: Codable {
 
 struct GanmaMagazinePage: Codable {
     let id: String
-    let baseUrl: String
+    let baseURL: String
     let token: String
     let files: [String]
+    
+    enum CodingKeys: String, CodingKey {
+        case id
+        case baseURL = "baseUrl"
+        case token
+        case files
+    }
 }
 
 struct GanmaMagazineStoryThumbnail: Codable {
