@@ -11,6 +11,8 @@ enum Source: CaseIterable, Codable {
     case senManga
     case ganma
     case booklive
+
+    // Other sources 
     
     var name: String {
         switch self {

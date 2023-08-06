@@ -38,7 +38,7 @@ extension LibraryViewController {
         configureNavigationBar()
         
         // Search bar
-        searchController.searchBar.placeholder = "Enter..."
+        searchController.searchBar.placeholder = "Search..."
         searchController.searchBar.searchBarStyle = .minimal
         searchController.searchResultsUpdater = self
         navigationItem.searchController = searchController
@@ -167,7 +167,6 @@ extension LibraryViewController: UICollectionViewDataSource, UICollectionViewDel
 extension LibraryViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         guard let query = searchController.searchBar.text else { return }
-        print("current query", query)
         viewModel.filterManga(with: query)
     }
 }

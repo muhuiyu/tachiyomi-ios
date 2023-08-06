@@ -31,31 +31,49 @@ extension SourceViewModel {
         currentPage += 1
         reloadData()
     }
-    func reloadData() {
+    func searchMangas(for query: String) {
+        currentPage = 1
+        reloadData(for: query)
+    }
+    private func reloadData(for query: String = "") {
         isLoading.accept(true)
+        
+        // if currentPage = 1 (start new search or clear search), clear sourceMangas
+        if currentPage == 1 {
+            hasNextPage = true
+            sourceMangas.accept([])
+        }
+        
         Task {
-            switch source {
-            case .senManga:
-                let result = await SenManga.shared.getPopularManga(at: currentPage)
-                sourceMangas.accept(sourceMangas.value + result.mangas)
-                hasNextPage = result.hasNextPage
-                isLoading.accept(false)
-            case .ganma:
-                let result = await Ganma.shared.getPopularManga(at: currentPage)
-                sourceMangas.accept(sourceMangas.value + result.mangas)
-                hasNextPage = result.hasNextPage
-                isLoading.accept(false)
-            case .booklive:
-                let result = await Booklife.shared.getPopularManga(at: currentPage)
-                sourceMangas.accept(sourceMangas.value + result.mangas)
-                hasNextPage = result.hasNextPage
-                isLoading.accept(false)
-            }
+            let result = await fetchData(for: query)
+            sourceMangas.accept(sourceMangas.value + result.mangas)
+            hasNextPage = result.hasNextPage
+            isLoading.accept(false)
         }
     }
     func addMangaToLibary(at indexPath: IndexPath) {
         guard let mangaURL = sourceMangas.value[indexPath.row].url else { return }
         LocalStorage.shared.addToLibrary(for: mangaURL)
+    }
+}
+
+// MARK: - Private methods
+extension SourceViewModel {
+    private func fetchData(for query: String) async -> MangaPage {
+        switch source {
+        case .senManga:
+            if query.isEmpty {
+                return await SenManga.shared.getPopularManga(at: currentPage)
+            } else {
+                return await SenManga.shared.searchMangas(for: query, at: currentPage)
+            }
+        case .ganma:
+            // haven't completed search function yet
+            return await Ganma.shared.getPopularManga(at: currentPage)
+        case .booklive:
+            // haven't completed search function yet
+            return await Booklife.shared.getPopularManga(at: currentPage)
+        }
     }
 }
 

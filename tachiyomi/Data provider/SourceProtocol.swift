@@ -15,4 +15,5 @@ protocol SourceProtocol {
     
     func getPopularManga(at page: Int) async -> MangaPage
     func getManga(from urlString: String) async -> SourceManga?
+    func searchMangas(for query: String, at page: Int) async -> MangaPage
 }

@@ -11,12 +11,15 @@ class BrowseViewController: Base.MVVMViewController<BrowseViewModel> {
     // MARK: - Views
     private let tableView = UITableView(frame: .zero, style: .insetGrouped)
     
-    // TODO: - Implement source search
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         configureViews()
         configureConstraints()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        tabBarController?.tabBar.isHidden = false
     }
 }
 

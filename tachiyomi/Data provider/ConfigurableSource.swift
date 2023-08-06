@@ -44,6 +44,22 @@ class ConfigurableSource: SourceProtocol {
         return []
     }
     
+    // MARK: - Search mangas
+    func searchMangas(for query: String, at page: Int) async -> MangaPage {
+        // Not supported, filter from popular mangas
+        let popularMangaPage = await getPopularManga(at: page)
+        let filteredMangas = popularMangaPage.mangas.filter { manga in
+            guard let mangaTitle = manga.title else { return false }
+            for word in query.split(separator: " ") {
+                if mangaTitle.contains(word) {
+                    return true
+                }
+            }
+            return false
+        }
+        return MangaPage(mangas: filteredMangas, hasNextPage: popularMangaPage.hasNextPage)
+    }
+    
     internal func getMangaRequest(for identifier: String) -> URLRequest? {
         // Should be implemented in subclass
         return nil

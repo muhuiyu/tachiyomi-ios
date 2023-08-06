@@ -8,5 +8,8 @@
 import UIKit
 
 class HistoryViewController: Base.MVVMViewController<HistoryViewModel> {
-    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        tabBarController?.tabBar.isHidden = false
+    }
 }

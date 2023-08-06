@@ -35,13 +35,20 @@ class SenManga: ParseHTTPSource {
         return "ul.pagination a[rel=next]"
     }
     
+    override var mangaSearchResultSelector: String {
+        return "div.mng"
+    }
+    
+    override var mangaSearchResultNextPageSelector: String {
+        return "ul.pagination a[rel=next]"
+    }
+    
+    // MARK: - getPopularManga
     override internal func getPopularMangaRequest(at page: Int) -> URL? {
         var urlComponents = URLComponents(string: baseURL)
         urlComponents?.queryItems = [ URLQueryItem(name: "page", value: String(page)) ]
         return urlComponents?.url
     }
-    
-    private let defaultImageURL = "https://raw.senmanga.com/img/default.png"
     
     override internal func parsePopularManga(from element: Element) -> SourceManga? {
         do {
@@ -57,6 +64,32 @@ class SenManga: ParseHTTPSource {
         }
     }
     
+    // MARK: - getSearchMangas
+    override func getSearchMangaRequest(for query: String, at page: Int) -> URL? {
+        var urlComponents = URLComponents(string: baseURL + "/search")
+        urlComponents?.queryItems = [
+            URLQueryItem(name: "s", value: query),
+            URLQueryItem(name: "page", value: String(page))
+        ]
+        return urlComponents?.url
+    }
+    
+    override func parseSearchedManga(from element: Element) -> SourceManga? {
+        do {
+            let link = try element.select("a")
+            let title = try link.text()
+            let urlString = try link.attr("href")
+            guard let url = URL(string: urlString) else { return nil }
+            let thumbnailURLString = try element.select("img").attr("data-src")
+            print("parsed", title, urlString)
+            guard !title.isEmpty && !thumbnailURLString.isEmpty && thumbnailURLString != defaultImageURL else { return nil }
+            return SourceManga(url: url.absoluteString, title: title, thumbnailURL: thumbnailURLString, source: .senManga)
+        } catch {
+            return nil
+        }
+    }
+    
+    // MARK: - parseManga
     override func parseManga(from html: String, _ urlString: String) -> SourceManga? {
         do {
             let doc = try SwiftSoup.parse(html)
@@ -107,6 +140,7 @@ class SenManga: ParseHTTPSource {
         }
     }
 
+    // MARK: - parseManga with partialSourceManga
     override func parseManga(from html: String, _ partialSourceManga: SourceManga) -> SourceManga? {
         do {
             let doc = try SwiftSoup.parse(html)
@@ -152,6 +186,7 @@ class SenManga: ParseHTTPSource {
         }
     }
 
+    // MARK: - parseChapterPages
     override internal func parseChapterPages(from html: String, chapterURL: String) async -> Result<[ChapterPage], Error> {
         do {
             let doc = try SwiftSoup.parse(html)
@@ -185,6 +220,7 @@ class SenManga: ParseHTTPSource {
         }
     }
     
+    // MARK: - fetchChapterPage
     func fetchChapterPage(from pageURL: String, at pageNumber: Int) async -> ChapterPage {
         let imageURL = await fetchImageURL(from: pageURL)
         guard var imageURL = imageURL else {
@@ -232,3 +268,9 @@ class SenManga: ParseHTTPSource {
         return nil
     }
 }
+
+// MARK: - Private properties
+extension SenManga {
+    private var defaultImageURL: String { "https://raw.senmanga.com/img/default.png" }
+}
+

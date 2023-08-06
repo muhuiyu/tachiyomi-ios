@@ -32,6 +32,10 @@ class SourceCatalogViewController: Base.MVVMViewController<SourceViewModel> {
             self.collectionView.reloadData()
         }
     }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        tabBarController?.tabBar.isHidden = true
+    }
 }
 
 // MARK: - View Config
@@ -40,9 +44,9 @@ extension SourceCatalogViewController {
         configureNavigationBar()
         
         // Search bar
-        searchController.searchBar.placeholder = "Enter..."
+        searchController.searchBar.delegate = self
+        searchController.searchBar.placeholder = "Search mangas..."
         searchController.searchBar.searchBarStyle = .minimal
-        searchController.searchResultsUpdater = self
         navigationItem.searchController = searchController
         
         // SegmentControl
@@ -184,10 +188,9 @@ extension SourceCatalogViewController: UICollectionViewDataSource, UICollectionV
     }
 }
 
-extension SourceCatalogViewController: UISearchResultsUpdating {
-    func updateSearchResults(for searchController: UISearchController) {
+extension SourceCatalogViewController: UISearchBarDelegate {
+    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
         guard let query = searchController.searchBar.text else { return }
-        
-        // TODO: -
+        viewModel.searchMangas(for: query)
     }
 }

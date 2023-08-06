@@ -40,7 +40,15 @@ class ParseHTTPSource: SourceProtocol {
     
     var popularMangaNextPageSelector: String {
        return "Should be implemented in subclass"
-     }
+    }
+    
+    var mangaSearchResultSelector: String {
+        return "Should be implemented in subclass"
+    }
+    
+    var mangaSearchResultNextPageSelector: String {
+       return "Should be implemented in subclass"
+    }
     
     // MARK: - Get popular manga
     func getPopularManga(at page: Int) async -> MangaPage {
@@ -80,6 +88,47 @@ class ParseHTTPSource: SourceProtocol {
     }
     
     internal func parsePopularManga(from element: Element) -> SourceManga? {
+        // Should be implemented in subclass
+        return nil
+    }
+    
+    // MARK: - Search manga
+    func searchMangas(for query: String, at page: Int) async -> MangaPage {
+        guard let url = getSearchMangaRequest(for: query, at: page) else {
+            return MangaPage(mangas: [], hasNextPage: false)
+        }
+        do {
+            let (data, _) = try await URLSession.shared.data(from: url)
+            if let contents = String(data: data, encoding: .utf8) {
+                return parseMangaSearchResult(from: contents)
+            } else {
+                return MangaPage(mangas: [], hasNextPage: false)
+            }
+        } catch {
+            print("An error occurred: \(error)")
+            return MangaPage(mangas: [], hasNextPage: false)
+        }
+    }
+    
+    internal func getSearchMangaRequest(for query: String, at page: Int) -> URL? {
+        // Should be implemented in subclass
+        return nil
+    }
+    
+    internal func parseMangaSearchResult(from html: String) -> MangaPage {
+        do {
+            let doc = try SwiftSoup.parse(html)
+            let mangaElements = try doc.select(mangaSearchResultSelector)
+            let mangas = mangaElements.compactMap({ parseSearchedManga(from: $0) })
+            let nextPage = try doc.select(mangaSearchResultNextPageSelector)
+            return MangaPage(mangas: mangas, hasNextPage: !nextPage.isEmpty)
+        } catch {
+            print("An error occurred: \(error)")
+            return MangaPage(mangas: [], hasNextPage: false)
+        }
+    }
+    
+    internal func parseSearchedManga(from element: Element) -> SourceManga? {
         // Should be implemented in subclass
         return nil
     }
