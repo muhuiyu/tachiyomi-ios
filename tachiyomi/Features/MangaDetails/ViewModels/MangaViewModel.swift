@@ -33,6 +33,10 @@ extension MangaViewModel {
                 let updatedManga = await SenManga.shared.getManga(from: url, manga)
                 self.manga.accept(updatedManga)
                 isLoading.accept(false)
+            case .ganma:
+                let updatedManga = await Ganma.shared.getManga(from: url)
+                self.manga.accept(updatedManga)
+                isLoading.accept(false)
             }
         }
     }

@@ -8,22 +8,22 @@
 import UIKit
 import SwiftSoup
 
-class SenManga: ParseHTTPSource, SourceProtocol {
+class SenManga: ParseHTTPSource {
     static let shared = SenManga()
     
-    var language: Language {
+    override var language: Language {
         return .ja
     }
     
-    var supportsLatest: Bool {
+    override var supportsLatest: Bool {
         return true
     }
     
-    var name: String {
+    override var name: String {
         return "Sen Manga"
     }
     
-    var baseURL: String {
+    override var baseURL: String {
         return "https://raw.senmanga.com"
     }
     
@@ -74,7 +74,7 @@ class SenManga: ParseHTTPSource, SourceProtocol {
                 let type = try eachInfo.select("strong").text()
                 switch type.lowercased() {
                 case "genres":
-                    updatedManga.genre = try eachInfo.select("a").eachText()
+                    updatedManga.genres = try eachInfo.select("a").eachText()
                 case "author":
                     updatedManga.author = try eachInfo.text()
                 case "status":
@@ -119,7 +119,7 @@ class SenManga: ParseHTTPSource, SourceProtocol {
                 let type = try eachInfo.select("strong").text()
                 switch type.lowercased() {
                 case "genres":
-                    updatedManga.genre = try eachInfo.select("a").eachText()
+                    updatedManga.genres = try eachInfo.select("a").eachText()
                 case "author":
                     updatedManga.author = try eachInfo.text()
                 case "status":

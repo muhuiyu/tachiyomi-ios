@@ -12,4 +12,7 @@ protocol SourceProtocol {
     var supportsLatest: Bool { get }
     var name: String { get }
     var baseURL: String { get }
+    
+    func getPopularManga(at page: Int) async -> MangaPage
+    func getManga(from urlString: String) async -> SourceManga?
 }

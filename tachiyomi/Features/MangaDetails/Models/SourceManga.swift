@@ -10,10 +10,11 @@ import UIKit
 struct SourceManga: Codable {
     var url: String?
     var title: String?
+    var alias: String?
     var artist: String?
     var author: String?
     var description: String?
-    var genre: [String]
+    var genres: [String]
     var status: Status?
     var thumbnailURL: String?
     var updateStrategy: UpdateStrategy?
@@ -69,13 +70,14 @@ struct SourceManga: Codable {
         }
     }
     
-    init(url: String? = nil, title: String? = nil, artist: String? = nil, author: String? = nil, description: String? = nil, genre: [String] = [], status: Status? = nil, thumbnailURL: String? = nil, updateStrategy: UpdateStrategy? = nil, isInitialized: Bool? = nil, chapters: [SourceChapter] = [], source: Source) {
+    init(url: String? = nil, title: String? = nil, alias: String? = nil, artist: String? = nil, author: String? = nil, description: String? = nil, genres: [String] = [], status: Status? = nil, thumbnailURL: String? = nil, updateStrategy: UpdateStrategy? = nil, isInitialized: Bool? = nil, chapters: [SourceChapter] = [], source: Source) {
         self.url = url
         self.title = title
+        self.alias = alias
         self.artist = artist
         self.author = author
         self.description = description
-        self.genre = genre
+        self.genres = genres
         self.status = status
         self.thumbnailURL = thumbnailURL
         self.updateStrategy = updateStrategy
@@ -85,15 +87,35 @@ struct SourceManga: Codable {
     }
 }
 
+// MARK: - Ganma data decoder
 extension SourceManga {
-    static let testEntry: SourceManga = SourceManga(
-        url: "https://raw.senmanga.com/isekai-maou-to-shoukan-shoujo-dorei-majutsu",
-        title: "Isekai Maou to Shoukan Shoujo Dorei Majutsu",
-        description: "In the MMORPG Cross Reverie, Takuma Sakamoto is so powerful that he is lauded as the âDemon Lordâ by other players. One day, he is summoned to a world outside his ownâ but with the same appearance he had in the game! There, he meets two girls who both proclaim themselves to be his Summoner. They perform an Enslavement Ritual to turn him into their Summonâ¦ but thatâs when Takumaâs passive ability <<Magic Reflection>> activates! Instead, it is the girls who become enslaved! Though Takuma may be the strongest Sorcerer there is, he has no idea how to talk with other people. It is here he makes his choice: to act based on his persona from the game! âAmazing? But of courseâ¦ I am Diablo, the being known and feared as the Demon Lord!â So begins a tale of adventure with an earth-shakingly powerful Demon Lord (or at least someone who acts like one) taking on another world!",
-        genre: ["fight", "cute"],
-        status: .ongoing,
-        thumbnailURL: "https://raw.senmanga.com/covers/isekai-maou-to-shoukan-shoujo-dorei-majutsu.jpg",
-        chapters: [SourceChapter(url: "https://raw.senmanga.com/isekai-maou-to-shoukan-shoujo-dorei-majutsu/9", name: "Chapter 9", uploadedDate: "1 year ago", chapterNumber: "9", scanlator: nil), SourceChapter(url: "https://raw.senmanga.com/isekai-maou-to-shoukan-shoujo-dorei-majutsu/8", name: "Chapter 8", uploadedDate: "1 year ago", chapterNumber: "8", scanlator: nil), SourceChapter(url: "https://raw.senmanga.com/isekai-maou-to-shoukan-shoujo-dorei-majutsu/7", name: "Chapter 7", uploadedDate: "1 year ago", chapterNumber: "7", scanlator: nil)],
-        source: .senManga
-    )
+    init(from ganmaData: GanmaMangaOverviewRoot) {
+        self.url = Ganma.shared.getMangaURL(for: ganmaData.alias)
+        self.title = ganmaData.title
+        self.alias = ganmaData.alias
+        self.artist = nil
+        self.author = ganmaData.author.penName
+        self.description = ganmaData.overview
+        self.genres = []
+        self.status = .unknown
+        self.thumbnailURL = ganmaData.squareImage.url
+        self.updateStrategy = nil
+        self.isInitialized = nil
+        self.chapters = []
+        self.source = .ganma
+    }
+    init(from magazine: GanmaMagazine) {
+        self.url = Ganma.shared.getMangaURL(for: magazine.alias)
+        self.title = magazine.title
+        self.alias = magazine.alias
+        self.author = magazine.author.penName
+        self.description = magazine.description
+        self.genres = []
+        self.status = magazine.flags.isFinish ?? false ? .completed : .ongoing
+        self.thumbnailURL = magazine.squareImage.url
+        self.updateStrategy = nil
+        self.isInitialized = true
+        self.chapters = magazine.items.enumerated().map({ $0.element.toChapter(at: $0.offset) })
+        self.source = .ganma
+    }
 }

@@ -17,7 +17,7 @@ class ReaderPageViewController: ViewController {
         didSet {
             DispatchQueue.main.async { [weak self] in
                 guard let self = self else { return }
-                self.imageView.kf.setImage(with: URL(string: self.imageURLString))
+                self.imageView.kf.setImage(with: URL(string: self.imageURLString), placeholder: UIImage(systemName: Icons.photoFill))
             }
         }
     }
@@ -33,6 +33,7 @@ class ReaderPageViewController: ViewController {
 // MARK: - View Config
 extension ReaderPageViewController {
     private func configureViews() {
+        imageView.tintColor = .systemGray
         imageView.contentMode = .scaleAspectFit
         scrollView.addSubview(imageView)
         

@@ -20,8 +20,8 @@ class MangaDetailsHeaderCell: UITableViewCell, BaseCell {
     
     private let topStackView = UIStackView()
     private let thumbnailView = UIImageView()
-    private let infoStackView = UIStackView()
-    private let infoTopStackView = UIStackView()
+    private let infoStackView = UIStackView()       // top + button
+    private let infoTopStackView = UIStackView()    // title, author
     private let titleLabel = UILabel()
     private let authorLabel = UILabel()
     private let statusView = MangaDetailsHeaderStatusView()
@@ -116,9 +116,11 @@ extension MangaDetailsHeaderCell {
     }
     private func configureConstraints() {
         thumbnailView.snp.remakeConstraints { make in
+            make.height.equalTo(thumbnailView.snp.width).multipliedBy(1.5)
             // TODO: - Calculate this
-            make.width.equalTo(160)
+            make.width.equalTo(170)
         }
+        
         topStackView.snp.remakeConstraints { make in
             make.top.leading.trailing.equalTo(contentView.layoutMarginsGuide)
         }

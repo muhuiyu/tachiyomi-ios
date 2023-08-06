@@ -40,6 +40,11 @@ extension SourceViewModel {
                 sourceMangas.accept(sourceMangas.value + result.mangas)
                 hasNextPage = result.hasNextPage
                 isLoading.accept(false)
+            case .ganma:
+                let result = await Ganma.shared.getPopularManga(at: currentPage)
+                sourceMangas.accept(sourceMangas.value + result.mangas)
+                hasNextPage = result.hasNextPage
+                isLoading.accept(false)
             }
         }
     }

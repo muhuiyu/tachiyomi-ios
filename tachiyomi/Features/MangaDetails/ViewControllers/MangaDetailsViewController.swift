@@ -178,7 +178,6 @@ extension MangaDetailsViewController: MangaDetailsHeaderCellDelegate, MangaDetai
     func mangaDetailsHeaderCellDidTapAddToLibrary() {
         viewModel.addToLibrary()
         DispatchQueue.main.async { [weak self] in
-//            self?.tableView.reloadRows(at: [TableViewConstants.headerIndexPath], with: .automatic)
             self?.tableView.reloadData()
         }
     }

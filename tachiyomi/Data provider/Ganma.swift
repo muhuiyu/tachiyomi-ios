@@ -8,212 +8,209 @@
 import UIKit
 import SwiftSoup
 
-class Ganma: ParseHTTPSource, SourceProtocol {
-    static let shared = SenManga()
+class Ganma: ConfigurableSource {
+    static let shared = Ganma()
     
-    var language: Language {
+    override var language: Language {
         return Source.ganma.language
     }
     
-    var supportsLatest: Bool {
+    override var supportsLatest: Bool {
         return true
     }
     
-    var name: String {
+    override var name: String {
         return Source.ganma.name
     }
     
-    var baseURL: String {
+    override var baseURL: String {
         return "https://ganma.jp"
     }
     
-    override var popularMangaSelector: String {
-        // TODO: - Need to change
-        return "div.mng"
+    override func getPopularMangaRequest(at page: Int) -> URLRequest? {
+        let url: URL?
+        switch page {
+        case 1:
+            url = URL(string: "\(baseURL)/api/1.0/ranking")
+        default:
+            url = URL(string: "\(baseURL)/api/1.1/ranking?flag=Finish") // filter to get all finished mangas?
+        }
+        guard let url = url else { return nil }
+        
+        var request = URLRequest(url: url)
+        request.addValue(baseURL, forHTTPHeaderField: "X-From")
+        return request
     }
     
-    override var popularMangaNextPageSelector: String {
-        // TODO: - Need to change
-        return "ul.pagination a[rel=next]"
-    }
-    
-    override internal func getPopularMangaRequest(at page: Int) -> URL? {
-        // TODO: - Need to change
-        var urlComponents = URLComponents(string: baseURL)
-        urlComponents?.queryItems = [ URLQueryItem(name: "page", value: String(page)) ]
-        return urlComponents?.url
-    }
-    
-    override internal func parsePopularManga(from element: Element) -> SourceManga? {
+    override func parsePopularManga(from data: Data) -> [SourceManga] {
         do {
-            let urlString = try element.select("a").attr("href")
-            guard let url = URL(string: urlString) else { return nil }
-            let title = try element.select("h4.text-truncate").text()
-            let thumbnailURLString = try element.select(".cover img").attr("src")
-            print("parsed", title, urlString)
-            guard !title.isEmpty && !thumbnailURLString.isEmpty && thumbnailURLString != defaultImageURL else { return nil }
-            return SourceManga(url: url.absoluteString, title: title, thumbnailURL: thumbnailURLString, source: .senManga)
+            let base = try JSONDecoder().decode(GanmaPopularMangasData.self, from: data)
+            return base.root.compactMap({ SourceManga(from: $0) })
         } catch {
-            return nil
+            print("Error in parsePopularManga: \(error.localizedDescription)")
+            return []
         }
     }
     
-    override func parseManga(from html: String, _ urlString: String) -> SourceManga? {
-        do {
-            let doc = try SwiftSoup.parse(html)
-            var updatedManga = SourceManga(source: .senManga)
-            
-            updatedManga.url = urlString
-            updatedManga.title = try doc.select("h1.series").text()
-            updatedManga.author = try doc.select("h1.series").text()
-            updatedManga.thumbnailURL = try doc.select("div.cover").select("img").attr("src")
-            
-            let info = try doc.select("div")
-                .filter({ $0.hasClass("items") })
-            
-            for eachInfo in info {
-                let type = try eachInfo.select("strong").text()
-                switch type.lowercased() {
-                case "genres":
-                    updatedManga.genre = try eachInfo.select("a").eachText()
-                case "author":
-                    updatedManga.author = try eachInfo.text()
-                case "status":
-                    let statusRawValue = try eachInfo.text()
-                    if let newStatus = SourceManga.Status(rawValue: statusRawValue.lowercased()) {
-                        updatedManga.status = newStatus
-                    }
-                default:
-                    break
-                }
-            }
-            
-            let summary = try doc.select("div.summary").text()
-            updatedManga.description = summary
-            
-            let chapters = try doc.select("ul.chapter-list").select("li")
-                .map { chapter in
-                    let url = try chapter.select("a").first?.attr("href") ?? ""
-                    let name = try chapter.select("a").first?.text() ?? ""
-                    let time = try chapter.select("time[datetime]").text()
-                    
-                    let numberRegex = Regex(/\d+(\.\d+)?/)
-                    let chapterNumber = name.firstMatch(of: numberRegex)?.0 ?? "1"
-                    return SourceChapter(url: url, name: name, uploadedDate: time, chapterNumber: String(chapterNumber))
-                }
-            updatedManga.chapters = chapters
-            return updatedManga
-        } catch {
-            return nil
-        }
-    }
-
-    override func parseManga(from html: String, _ partialSourceManga: SourceManga) -> SourceManga? {
-        do {
-            let doc = try SwiftSoup.parse(html)
-            var updatedManga = partialSourceManga
-            
-            let info = try doc.select("div")
-                .filter({ $0.hasClass("items") })
-            
-            for eachInfo in info {
-                let type = try eachInfo.select("strong").text()
-                switch type.lowercased() {
-                case "genres":
-                    updatedManga.genre = try eachInfo.select("a").eachText()
-                case "author":
-                    updatedManga.author = try eachInfo.text()
-                case "status":
-                    let statusRawValue = try eachInfo.text()
-                    if let newStatus = SourceManga.Status(rawValue: statusRawValue.lowercased()) {
-                        updatedManga.status = newStatus
-                    }
-                default:
-                    break
-                }
-            }
-            
-            let summary = try doc.select("div.summary").text()
-            updatedManga.description = summary
-            
-            let chapters = try doc.select("ul.chapter-list").select("li")
-                .map { chapter in
-                    let url = try chapter.select("a").first?.attr("href") ?? ""
-                    let name = try chapter.select("a").first?.text() ?? ""
-                    let time = try chapter.select("time[datetime]").text()
-                    
-                    let numberRegex = Regex(/\d+(\.\d+)?/)
-                    let chapterNumber = name.firstMatch(of: numberRegex)?.0 ?? "1"
-                    return SourceChapter(url: url, name: name, uploadedDate: time, chapterNumber: String(chapterNumber))
-                }
-            updatedManga.chapters = chapters
-            return updatedManga
-        } catch {
-            return nil
-        }
-    }
-
-    override internal func parseChapterPages(from html: String, chapterURL: String) async -> Result<[ChapterPage], Error> {
-        do {
-            let doc = try SwiftSoup.parse(html)
-            guard
-                let pageIndexString = try doc.select("select.page-list").select("option").first?.text(),
-                let numberOfPages = extractPageNumber(from: pageIndexString)
-            else {
-                // No pages found. Return default 404 page
-                return .failure(ParseHTTPSourceError.noPageFound)
-            }
-            
-            var pages = [ChapterPage]()
-            
-            // Sen Manga has one extra logo page at the end of each chapter, so we remove the last page
-            for i in 1..<numberOfPages {
-                let imageURL = await fetchImageURL(from: chapterURL + "/\(i)")
-                if var imageURL = imageURL {
-                    // Some pages do not include https:
-                    if imageURL.starts(with: "//") {
-                        imageURL = "https:" + imageURL
-                    }
-                    // url contains spaces that need to be percentage encoding
-                    imageURL = imageURL.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
-                    pages.append(ChapterPage(pageNumber: i, imageURL: imageURL))
-                    print("fetched image", imageURL)
-                }
-            }
-            return .success(pages)
-            
-        } catch {
-            return .failure(error)
-        }
+    func getMangaURL(for alias: String) -> String {
+        return "\(baseURL)/api/1.0/magazines/web/\(alias)"
     }
     
-    private func fetchImageURL(from urlString: String) async -> String? {
+    override func getMangaRequest(for urlString: String) -> URLRequest? {
         guard let url = URL(string: urlString) else { return nil }
+        var request = URLRequest(url: url)
+        request.addValue(baseURL, forHTTPHeaderField: "X-From")
+        return request
+    }
+    
+    override func parseManga(from data: Data) -> SourceManga? {
         do {
-            let (data, _) = try await URLSession.shared.data(from: url)
-            guard let html = String(data: data, encoding: .utf8) else { return nil }
-            
-            let doc = try SwiftSoup.parse(html)
-            return try doc.select("img.picture").attr("src")
-            
+            let base = try JSONDecoder().decode(GanmaMangaDetailsData.self, from: data)
+            return SourceManga(from: base.root)
         } catch {
-            // handle error
-            print("Error on fetching data: \(error.localizedDescription)")
+            print("Error in parseManga: \(error.localizedDescription)")
             return nil
         }
     }
     
-    private func extractPageNumber(from string: String) -> Int? {
-        let regex = try? NSRegularExpression(pattern: "\\/ \\d+$", options: [])
-        let range = NSMakeRange(0, string.utf16.count)
-
-        if let match = regex?.firstMatch(in: string, options: [], range: range) {
-            let range = match.range(at: 0)
-            if let swiftRange = Range(range, in: string) {
-                let numberString = string[swiftRange].trimmingCharacters(in: .punctuationCharacters).trimmingCharacters(in: .whitespaces)
-                return Int(numberString)
-            }
-        }
-        return nil
+    // MARK: - Get chapter pages
+    func getChapterPages(from chapter: GanmaMagazinePage) -> [ChapterPage] {
+        return chapter.files
+            .enumerated()
+            .map({ ChapterPage(pageNumber: $0.offset, imageURL: "\(chapter.baseUrl)\($0.element)?\(chapter.token)") })
     }
+}
+
+// MARK: - Data models
+struct GanmaPopularMangasData: Codable {
+    let success: Bool
+    let root: [GanmaMangaOverviewRoot]
+}
+
+struct GanmaMangaOverviewRoot: Codable {
+    let id: String
+    let alias: String
+    let title: String
+    let overview: String
+    let squareImage: GanmaFile
+    let author: GanmaAuthor
+    let heartCount: Int
+    let bookmarkCount: Int
+    let isGTOON: Bool
+    let isNewSerial: Bool
+}
+
+struct GanmaFile: Codable {
+    let url: String
+    let id: String
+}
+
+struct GanmaAuthor: Codable {
+    let id: String
+    let profileImage: GanmaFile
+    let penName: String
+    let profile: String
+}
+
+struct GanmaSeries: Codable {
+    let id: String
+    let title: String
+    let squareImageUrl: String
+    
+    // TODO: - Change URL codingKeys
+}
+
+struct GanmaMangaDetailsData: Codable {
+    let success: Bool
+    let root: GanmaMagazine
+}
+
+struct GanmaMagazine: Codable {
+    let id: String
+    let alias: String
+    let title: String
+    let description: String
+    let overview: String?
+    let lead: String?
+    let author: GanmaAuthor
+    let series: GanmaSeries
+    let rectangleImage: GanmaFile
+    let squareImage: GanmaFile
+    let flags: GanmaMagazineFlags
+    let publicLatestStoryNumber: Int
+    let items: [GanmaMagazineStoryItem]
+    let newestStoryInformation: GanmaMagazineNewestStoryInformation
+    let release: Int
+    let thumbnail: GanmaFile
+    let coverImage: GanmaFile
+    let storyReleaseStatus: String
+}
+
+struct GanmaMagazineFlags: Codable {
+    let isSunday: Bool?
+    let isMonday: Bool?
+    let isTuesday: Bool?
+    let isWednesday: Bool?
+    let isThursday: Bool?
+    let isFriday: Bool?
+    let isSaturday: Bool?
+    let isWeekly: Bool?
+    let isEveryOtherWeek: Bool?
+    let isThreeConsecutiveWeeks: Bool?
+    let isMonthly: Bool?
+    let isFinish: Bool?
+}
+
+struct GanmaMagazineStoryItem: Codable {
+    let id: String?
+    let storyId: String?
+    let title: String
+    let subtitle: String?
+    let releaseStart: Int
+    let releaseForFree: Int?
+    let kind: String
+    let page: GanmaMagazinePage
+    let afterwordImage: GanmaFile?
+    
+    func toChapter(at index: Int) -> SourceChapter {
+        var name = title
+        if let subtitle = subtitle {
+            name += "- \(subtitle)"
+        }
+        return SourceChapter(url: page.baseUrl,
+                             name: name,
+                             uploadedDate: getReleaseDateString(),
+                             chapterNumber: String(index+1),
+                             ganmaPage: page)
+    }
+    
+    func getReleaseDateString() -> String {
+        let timestamp = releaseStart / 1000 // divide by 1000 to convert milliseconds to seconds.
+        let date = Date(timeIntervalSince1970: TimeInterval(timestamp))
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        formatter.timeZone = TimeZone(abbreviation: "UTC")
+        let utcDateString = formatter.string(from: date)
+        return utcDateString
+    }
+}
+
+struct GanmaMagazinePage: Codable {
+    let id: String
+    let baseUrl: String
+    let token: String
+    let files: [String]
+}
+
+struct GanmaMagazineStoryThumbnail: Codable {
+    let url: String
+}
+
+struct GanmaMagazineNewestStoryInformation: Codable {
+    let release: Int
+    let id: String
+    let series: GanmaSeries
+    let author: GanmaAuthor
+    let title: String
+    let subTitle: String?
 }

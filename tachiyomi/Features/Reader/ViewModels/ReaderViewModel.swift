@@ -48,6 +48,10 @@ extension ReaderViewModel {
                 case .success(let fetchedPages):
                     pages.accept(fetchedPages)
                 }
+            case .ganma:
+                guard let page = chapter.value?.ganmaPage else { return }
+                let fetchedPages = Ganma.shared.getChapterPages(from: page)
+                pages.accept(fetchedPages)
             }
         }
     }

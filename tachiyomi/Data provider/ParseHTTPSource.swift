@@ -14,6 +14,8 @@ struct MangaPage {
 }
 
 class ParseHTTPSource: SourceProtocol {
+    
+    // MARK: - Basic information
     var language: Language {
         // Should be implemented in subclass
         return .ja
@@ -32,11 +34,6 @@ class ParseHTTPSource: SourceProtocol {
         return "Should be implemented in subclass"
     }
     
-    enum ParseHTTPSourceError: Error {
-        case noPageFound
-        case generic
-    }
-    
     var popularMangaSelector: String {
         return "Should be implemented in subclass"
     }
@@ -45,6 +42,7 @@ class ParseHTTPSource: SourceProtocol {
        return "Should be implemented in subclass"
      }
     
+    // MARK: - Get popular manga
     func getPopularManga(at page: Int) async -> MangaPage {
         guard let url = getPopularMangaRequest(at: page) else {
             return MangaPage(mangas: [], hasNextPage: false)
@@ -86,6 +84,7 @@ class ParseHTTPSource: SourceProtocol {
         return nil
     }
     
+    // MARK: - Get manga from url
     func getManga(from urlString: String) async -> SourceManga? {
         guard let url = URL(string: urlString) else {
             return nil
@@ -107,6 +106,7 @@ class ParseHTTPSource: SourceProtocol {
         return nil
     }
     
+    // MARK: - Get manga from url with partialManga
     func getManga(from urlString: String, _ partialSourceManga: SourceManga) async -> SourceManga? {
         guard let url = URL(string: urlString) else {
             return nil
@@ -128,6 +128,7 @@ class ParseHTTPSource: SourceProtocol {
         return nil
     }
     
+    // MARK: - Get chapter pages
     func getChapterPages(from urlString: String) async -> Result<[ChapterPage], Error> {
         guard let url = URL(string: urlString) else { return .failure(ParseHTTPSourceError.noPageFound) }
         
@@ -147,4 +148,11 @@ class ParseHTTPSource: SourceProtocol {
         // Should be implemented in subclass
         return .failure(ParseHTTPSourceError.noPageFound)
     }
+}
+
+
+// MARK: - ParseHTTPSourceError
+enum ParseHTTPSourceError: Error {
+    case noPageFound
+    case generic
 }
