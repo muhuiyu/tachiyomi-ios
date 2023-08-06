@@ -3,4 +3,180 @@
    uuid = "14614872-208F-4D91-B033-8ABD9574E9FE"
    type = "1"
    version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "BABDE280-9539-428D-8EC3-069E6AFDC696"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "tachiyomi/Features/Reader/ViewModels/ReaderViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "56"
+            endingLineNumber = "56"
+            landmarkName = "reloadData()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "BABDE280-9539-428D-8EC3-069E6AFDC696 - f6b764089cf133e3"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for closure #1 @Sendable () async -&gt; () in tachiyomi.ReaderViewModel.reloadData() -&gt; ()"
+                  moduleName = "tachiyomi"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/muyu/Dev/mine/tachiyomi-copycat/ios/tachiyomi/tachiyomi/Features/Reader/ViewModels/ReaderViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "57"
+                  endingLineNumber = "57"
+                  offsetFromSymbolStart = "872">
+               </Location>
+               <Location
+                  uuid = "BABDE280-9539-428D-8EC3-069E6AFDC696 - f6b764089cf13302"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for closure #1 @Sendable () async -&gt; () in tachiyomi.ReaderViewModel.reloadData() -&gt; ()"
+                  moduleName = "tachiyomi"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/muyu/Dev/mine/tachiyomi-copycat/ios/tachiyomi/tachiyomi/Features/Reader/ViewModels/ReaderViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "56"
+                  endingLineNumber = "56"
+                  offsetFromSymbolStart = "640">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "D07F5CCD-77BE-4CD1-8624-A375DEA1D4F3"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "tachiyomi/Features/Reader/ViewModels/ReaderViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "58"
+            endingLineNumber = "58"
+            landmarkName = "reloadData()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "D07F5CCD-77BE-4CD1-8624-A375DEA1D4F3 - 3b511615369877bb"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for closure #1 @Sendable () async -&gt; () in tachiyomi.ReaderViewModel.reloadData() -&gt; ()"
+                  moduleName = "tachiyomi"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/muyu/Dev/mine/tachiyomi-copycat/ios/tachiyomi/tachiyomi/Features/Reader/ViewModels/ReaderViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "59"
+                  endingLineNumber = "59"
+                  offsetFromSymbolStart = "284">
+               </Location>
+               <Location
+                  uuid = "D07F5CCD-77BE-4CD1-8624-A375DEA1D4F3 - f6b764089cf133c4"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for closure #1 @Sendable () async -&gt; () in tachiyomi.ReaderViewModel.reloadData() -&gt; ()"
+                  moduleName = "tachiyomi"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/muyu/Dev/mine/tachiyomi-copycat/ios/tachiyomi/tachiyomi/Features/Reader/ViewModels/ReaderViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "58"
+                  endingLineNumber = "58"
+                  offsetFromSymbolStart = "780">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "349D0E30-C2DC-4158-936C-82DF5ADF3C3F"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "tachiyomi/Features/Reader/ViewModels/ReaderViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "51"
+            endingLineNumber = "51"
+            landmarkName = "reloadData()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "349D0E30-C2DC-4158-936C-82DF5ADF3C3F - f6b764089cf130dd"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for closure #1 @Sendable () async -&gt; () in tachiyomi.ReaderViewModel.reloadData() -&gt; ()"
+                  moduleName = "tachiyomi"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/muyu/Dev/mine/tachiyomi-copycat/ios/tachiyomi/tachiyomi/Features/Reader/ViewModels/ReaderViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "51"
+                  endingLineNumber = "51"
+                  offsetFromSymbolStart = "256">
+               </Location>
+               <Location
+                  uuid = "349D0E30-C2DC-4158-936C-82DF5ADF3C3F - 3b511615369874c3"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for closure #1 @Sendable () async -&gt; () in tachiyomi.ReaderViewModel.reloadData() -&gt; ()"
+                  moduleName = "tachiyomi"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/muyu/Dev/mine/tachiyomi-copycat/ios/tachiyomi/tachiyomi/Features/Reader/ViewModels/ReaderViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "51"
+                  endingLineNumber = "51"
+                  offsetFromSymbolStart = "144">
+               </Location>
+               <Location
+                  uuid = "349D0E30-C2DC-4158-936C-82DF5ADF3C3F - d7838320e0e329f8"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(2) await resume partial function for closure #1 @Sendable () async -&gt; () in tachiyomi.ReaderViewModel.reloadData() -&gt; ()"
+                  moduleName = "tachiyomi"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/muyu/Dev/mine/tachiyomi-copycat/ios/tachiyomi/tachiyomi/Features/Reader/ViewModels/ReaderViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "51"
+                  endingLineNumber = "51"
+                  offsetFromSymbolStart = "44">
+               </Location>
+               <Location
+                  uuid = "349D0E30-C2DC-4158-936C-82DF5ADF3C3F - f6b764089cf130dd"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for closure #1 @Sendable () async -&gt; () in tachiyomi.ReaderViewModel.reloadData() -&gt; ()"
+                  moduleName = "tachiyomi"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/muyu/Dev/mine/tachiyomi-copycat/ios/tachiyomi/tachiyomi/Features/Reader/ViewModels/ReaderViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "51"
+                  endingLineNumber = "51"
+                  offsetFromSymbolStart = "108">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
 </Bucket>

@@ -98,7 +98,7 @@ class SenManga: ParseHTTPSource {
                     
                     let numberRegex = Regex(/\d+(\.\d+)?/)
                     let chapterNumber = name.firstMatch(of: numberRegex)?.0 ?? "1"
-                    return SourceChapter(url: url, name: name, uploadedDate: time, chapterNumber: String(chapterNumber))
+                    return SourceChapter(url: url, name: name, uploadedDate: time, chapterNumber: String(chapterNumber), mangaURL: urlString)
                 }
             updatedManga.chapters = chapters
             return updatedManga
@@ -143,7 +143,7 @@ class SenManga: ParseHTTPSource {
                     
                     let numberRegex = Regex(/\d+(\.\d+)?/)
                     let chapterNumber = name.firstMatch(of: numberRegex)?.0 ?? "1"
-                    return SourceChapter(url: url, name: name, uploadedDate: time, chapterNumber: String(chapterNumber))
+                    return SourceChapter(url: url, name: name, uploadedDate: time, chapterNumber: String(chapterNumber), mangaURL: partialSourceManga.url)
                 }
             updatedManga.chapters = chapters
             return updatedManga
@@ -165,18 +165,17 @@ class SenManga: ParseHTTPSource {
             
             var pages = [ChapterPage]()
             
+            let numberOfPrefetchedItems = numberOfPages > 5 ? 5 : numberOfPages
+            
             // Sen Manga has one extra logo page at the end of each chapter, so we remove the last page
             for i in 1..<numberOfPages {
-                let imageURL = await fetchImageURL(from: chapterURL + "/\(i)")
-                if var imageURL = imageURL {
-                    // Some pages do not include https:
-                    if imageURL.starts(with: "//") {
-                        imageURL = "https:" + imageURL
-                    }
-                    // url contains spaces that need to be percentage encoding
-                    imageURL = imageURL.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
-                    pages.append(ChapterPage(pageNumber: i, imageURL: imageURL))
-                    print("fetched image", imageURL)
+                let pageURL = chapterURL + "/\(i)"
+                // prefetch first 5 pages and add empty pages to the rest
+                if i <= numberOfPrefetchedItems {
+                    let page = await fetchChapterPage(from: pageURL, at: i)
+                    pages.append(page)
+                } else {
+                    pages.append(ChapterPage(pageURL: pageURL, pageNumber: i))
                 }
             }
             return .success(pages)
@@ -184,6 +183,23 @@ class SenManga: ParseHTTPSource {
         } catch {
             return .failure(error)
         }
+    }
+    
+    func fetchChapterPage(from pageURL: String, at pageNumber: Int) async -> ChapterPage {
+        let imageURL = await fetchImageURL(from: pageURL)
+        guard var imageURL = imageURL else {
+            return ChapterPage(pageURL: pageURL, pageNumber: pageNumber)
+        }
+        
+        // Some pages do not include https:
+        if imageURL.starts(with: "//") {
+            imageURL = "https:" + imageURL
+        }
+        
+        // url contains spaces that need to be percentage encoding
+        imageURL = imageURL.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+        print("fetched image", imageURL)
+        return ChapterPage(pageURL: pageURL, pageNumber: pageNumber, imageURL: imageURL)
     }
     
     private func fetchImageURL(from urlString: String) async -> String? {

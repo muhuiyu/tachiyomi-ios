@@ -12,6 +12,7 @@ struct SourceChapter: Codable {
     var name: String
     var uploadedDate: String
     var chapterNumber: String
+    var mangaURL: String?
     
     // Sen Manga only
     var scanlator: String?
@@ -19,11 +20,12 @@ struct SourceChapter: Codable {
     // Ganma only
     var ganmaPage: GanmaMagazinePage?
     
-    init(url: String, name: String, uploadedDate: String, chapterNumber: String, scanlator: String? = nil, ganmaPage: GanmaMagazinePage? = nil) {
+    init(url: String, name: String, uploadedDate: String, chapterNumber: String, mangaURL: String?, scanlator: String? = nil, ganmaPage: GanmaMagazinePage? = nil) {
         self.url = url
         self.name = name
         self.uploadedDate = uploadedDate
         self.chapterNumber = chapterNumber
+        self.mangaURL = mangaURL
         self.scanlator = scanlator
         self.ganmaPage = ganmaPage
     }

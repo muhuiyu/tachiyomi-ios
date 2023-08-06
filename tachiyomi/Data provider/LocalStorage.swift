@@ -12,6 +12,14 @@ class LocalStorage {
     
     // keys
     static var libraryMangaURLsKey: String { "k_library_manga_urls" }
+    
+    // for manga
+    // mangaURL: chapterURL
+    static var lastReadMangaChapterKey: String { "k_last_read_manga_chapter" }
+    
+    // for chapters
+    // chapterURL: pageNumber
+    static var lastReadChapterPageKey: String { "k_last_read_chapter_page" }
 }
 
 // MARK: - Library
@@ -23,6 +31,10 @@ extension LocalStorage {
             for mangaURL in mangaURLs {
                 if mangaURL.contains(SenManga.shared.baseURL) {
                     if let manga = await SenManga.shared.getManga(from: mangaURL) {
+                        mangas.append(manga)
+                    }
+                } else if mangaURL.contains(Ganma.shared.baseURL) {
+                    if let manga = await Ganma.shared.getManga(from: mangaURL) {
                         mangas.append(manga)
                     }
                 }
@@ -50,3 +62,42 @@ extension LocalStorage {
     }
 }
 
+// MARK: - Last read
+extension LocalStorage {
+    func getLastReadChapterURL(for mangaURL: String) -> String? {
+        if let lastReadMangaChapterDictionary = UserDefaults.standard.object(forKey: LocalStorage.lastReadMangaChapterKey) as? [String: String] {
+           return lastReadMangaChapterDictionary[mangaURL]
+        }
+        return nil
+    }
+    func saveLastReadChapterURL(_ chapterURL: String, for mangaURL: String) {
+        var dictionary = [String: String]()
+        if let lastReadMangaChapterDictionary = UserDefaults.standard.object(forKey: LocalStorage.lastReadMangaChapterKey) as? [String: String] {
+           dictionary = lastReadMangaChapterDictionary
+        }
+        dictionary[mangaURL] = chapterURL
+        UserDefaults.standard.set(dictionary, forKey: LocalStorage.lastReadMangaChapterKey)
+    }
+    func clearLastReadPageNumber(for chapterURL: String) {
+        var dictionary = [String: Int]()
+        if let lastReadChapterPageDictionary = UserDefaults.standard.object(forKey: LocalStorage.lastReadChapterPageKey) as? [String: Int] {
+           dictionary = lastReadChapterPageDictionary
+        }
+        dictionary.removeValue(forKey: chapterURL)
+        UserDefaults.standard.set(dictionary, forKey: LocalStorage.lastReadChapterPageKey)
+    }
+    func getLastReadPageNumber(for chapterURL: String) -> Int? {
+        if let lastReadChapterPageDictionary = UserDefaults.standard.object(forKey: LocalStorage.lastReadChapterPageKey) as? [String: Int] {
+           return lastReadChapterPageDictionary[chapterURL]
+        }
+        return nil
+    }
+    func saveLastReadPageNumber(_ pageNumber: Int, for chapterURL: String) {
+        var dictionary = [String: Int]()
+        if let lastReadChapterPageDictionary = UserDefaults.standard.object(forKey: LocalStorage.lastReadChapterPageKey) as? [String: Int] {
+           dictionary = lastReadChapterPageDictionary
+        }
+        dictionary[chapterURL] = pageNumber
+        UserDefaults.standard.set(dictionary, forKey: LocalStorage.lastReadChapterPageKey)
+    }
+}

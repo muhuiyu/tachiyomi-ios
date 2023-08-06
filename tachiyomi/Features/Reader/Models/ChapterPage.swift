@@ -8,6 +8,13 @@
 import Foundation
 
 struct ChapterPage {
+    let pageURL: String?
     let pageNumber: Int
-    let imageURL: String
+    let imageURL: String?
+    
+    init(pageURL: String? = nil, pageNumber: Int, imageURL: String? = nil) {
+        self.pageURL = pageURL
+        self.pageNumber = pageNumber
+        self.imageURL = imageURL
+    }
 }

@@ -14,6 +14,8 @@ class MangaViewModel: Base.ViewModel {
     let source: Source
     let isLoading = BehaviorRelay(value: true)
     
+    let lastReadChapterIndex: BehaviorRelay<Int?> = BehaviorRelay(value: nil)
+    
     init(appCoordinator: AppCoordinator? = nil, source: Source) {
         self.source = source
         super.init(appCoordinator: appCoordinator)
@@ -23,6 +25,12 @@ class MangaViewModel: Base.ViewModel {
 extension MangaViewModel {
     var firstChapterIndex: Int {
         return manga.value?.chapters.count ?? 0
+    }
+    var lastReadChapterName: String? {
+        if let index = lastReadChapterIndex.value {
+            return manga.value?.chapters[index].name
+        }
+        return nil
     }
     func reloadData() {
         guard let manga = manga.value, let url = manga.url else { return }
@@ -49,6 +57,13 @@ extension MangaViewModel {
         LocalStorage.shared.addToLibrary(for: mangaURL)
     }
     func getChapter(at chapterIndex: Int) -> SourceChapter? {
-        return manga.value?.chapters[chapterIndex-1]
+        return manga.value?.chapters[chapterIndex]
+    }
+    func restoreLastReadChapter() {
+        guard let mangaURL = manga.value?.url else { return }
+        if let lastReadChapterURL = LocalStorage.shared.getLastReadChapterURL(for: mangaURL),
+           let lastReadIndex = manga.value?.chapters.firstIndex(where: { $0.url == lastReadChapterURL }) {
+            lastReadChapterIndex.accept(lastReadIndex)
+        }
     }
 }

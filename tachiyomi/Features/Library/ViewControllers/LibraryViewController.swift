@@ -22,9 +22,13 @@ class LibraryViewController: Base.MVVMViewController<LibraryViewModel> {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         viewModel.reloadData()
+        tabBarController?.tabBar.isHidden = false
     }
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        DispatchQueue.main.async {
+            self.collectionView.reloadData()
+        }
     }
 }
 

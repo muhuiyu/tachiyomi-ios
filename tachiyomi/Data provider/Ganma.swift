@@ -218,7 +218,7 @@ struct GanmaMagazineStoryItem: Codable {
         case afterwordImage
     }
     
-    func toChapter(at index: Int) -> SourceChapter {
+    func toChapter(at index: Int, for mangaURL: String?) -> SourceChapter {
         var name = title
         if let subtitle = subtitle {
             name += "- \(subtitle)"
@@ -227,6 +227,7 @@ struct GanmaMagazineStoryItem: Codable {
                              name: name,
                              uploadedDate: getReleaseDateString(),
                              chapterNumber: String(index+1),
+                             mangaURL: mangaURL,
                              ganmaPage: page)
     }
     

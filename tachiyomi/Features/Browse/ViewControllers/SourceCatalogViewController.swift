@@ -26,6 +26,12 @@ class SourceCatalogViewController: Base.MVVMViewController<SourceViewModel> {
         configureConstraints()
         configureBindings()
     }
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        DispatchQueue.main.async {
+            self.collectionView.reloadData()
+        }
+    }
 }
 
 // MARK: - View Config

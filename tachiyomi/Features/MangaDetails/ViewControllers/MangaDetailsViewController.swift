@@ -25,6 +25,12 @@ class MangaDetailsViewController: Base.MVVMViewController<MangaViewModel> {
         
         viewModel.reloadData()
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        viewModel.restoreLastReadChapter()
+        tabBarController?.tabBar.isHidden = true
+    }
 }
 
 // MARK: - Handlers
@@ -33,9 +39,9 @@ extension MangaDetailsViewController {
         tableView.scrollToRow(at: TableViewConstants.headerIndexPath, at: .top, animated: true)
     }
     private func didTapStart(from chapterIndex: Int) {
-        guard let chapter = viewModel.getChapter(at: chapterIndex) else { return }
-        let readerViewModel  = ReaderViewModel(appCoordinator: self.appCoordinator, source: viewModel.source)
-        readerViewModel.chapter.accept(chapter)
+        guard let chapters = viewModel.manga.value?.chapters else { return }
+        let readerViewModel  = ReaderViewModel(appCoordinator: self.appCoordinator, chapters: chapters, source: viewModel.source)
+        readerViewModel.chapterIndex.accept(chapterIndex)
         let navigationController = ReaderViewController(appCoordinator: self.appCoordinator, viewModel: readerViewModel).embedInNavgationController()
         navigationController.isModalInPresentation = true
         navigationController.modalPresentationStyle = .fullScreen
@@ -64,7 +70,7 @@ extension MangaDetailsViewController {
         startButton.buttonColor = .systemBlue
         startButton.tapHandler = { [weak self] in
             guard let self = self else { return }
-            self.didTapStart(from: self.viewModel.firstChapterIndex)
+            self.didTapStart(from: self.viewModel.lastReadChapterIndex.value ?? self.viewModel.firstChapterIndex)
         }
         view.addSubview(startButton)
         spinner.startAnimating()
@@ -103,6 +109,13 @@ extension MangaDetailsViewController {
                 self?.configureVisibility(isLoading)
             }
             .disposed(by: disposeBag)
+        
+        viewModel.lastReadChapterIndex
+            .asObservable()
+            .subscribe { [weak self] _ in
+                self?.reloadStartButton()
+            }
+            .disposed(by: disposeBag)
     }
     
     private func configureVisibility(_ isLoading: Bool) {
@@ -115,6 +128,14 @@ extension MangaDetailsViewController {
                 self?.spinner.startAnimating()
             } else {
                 self?.spinner.stopAnimating()
+            }
+        }
+    }
+    
+    private func reloadStartButton() {
+        DispatchQueue.main.async { [weak self] in
+            if let name = self?.viewModel.lastReadChapterName {
+                self?.startButton.text = "Continue from \(name)"
             }
         }
     }
@@ -160,7 +181,7 @@ extension MangaDetailsViewController: UITableViewDataSource, UITableViewDelegate
             tableView.deselectRow(at: indexPath, animated: true)
         }
         guard indexPath != TableViewConstants.headerIndexPath else { return }
-        didTapStart(from: indexPath.row)
+        didTapStart(from: indexPath.row-1)
     }
     func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
         if indexPath == TableViewConstants.headerIndexPath {

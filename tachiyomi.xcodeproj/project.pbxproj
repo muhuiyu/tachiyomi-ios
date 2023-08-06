@@ -79,6 +79,7 @@
 		E4C27C5D2A7E2F1F00372B8D /* Ganma.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4C27C5C2A7E2F1F00372B8D /* Ganma.swift */; };
 		E4C27C5F2A7E984700372B8D /* ConfigurableSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4C27C5E2A7E984700372B8D /* ConfigurableSource.swift */; };
 		E4C27C632A7F2DCE00372B8D /* Booklife.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4C27C622A7F2DCE00372B8D /* Booklife.swift */; };
+		E4C27C692A7F844000372B8D /* ReaderEndPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4C27C682A7F844000372B8D /* ReaderEndPageViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -150,6 +151,7 @@
 		E4C27C5C2A7E2F1F00372B8D /* Ganma.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ganma.swift; sourceTree = "<group>"; };
 		E4C27C5E2A7E984700372B8D /* ConfigurableSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurableSource.swift; sourceTree = "<group>"; };
 		E4C27C622A7F2DCE00372B8D /* Booklife.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Booklife.swift; sourceTree = "<group>"; };
+		E4C27C682A7F844000372B8D /* ReaderEndPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReaderEndPageViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -544,6 +546,7 @@
 				E46B12E92A7DACAD003E4C1D /* ReaderLoadingViewController.swift */,
 				E46B12EB2A7DAE48003E4C1D /* ReaderPageViewController.swift */,
 				E46B12F02A7DBE1E003E4C1D /* ReaderNoPageFoundViewController.swift */,
+				E4C27C682A7F844000372B8D /* ReaderEndPageViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -715,6 +718,7 @@
 				E46B12902A7C4957003E4C1D /* LibraryViewController.swift in Sources */,
 				E44E2B4C2A7C396900669192 /* ErrorHandler.swift in Sources */,
 				E4C27C5D2A7E2F1F00372B8D /* Ganma.swift in Sources */,
+				E4C27C692A7F844000372B8D /* ReaderEndPageViewController.swift in Sources */,
 				E4C27C5F2A7E984700372B8D /* ConfigurableSource.swift in Sources */,
 				E46B12EA2A7DACAD003E4C1D /* ReaderLoadingViewController.swift in Sources */,
 				E46B12AD2A7C4B48003E4C1D /* UpdatesViewModel.swift in Sources */,

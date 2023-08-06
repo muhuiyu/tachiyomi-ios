@@ -37,9 +37,9 @@ extension LibraryViewModel {
     }
     func deleteMangaFromLibrary(at indexPath: IndexPath) {
         guard let mangaURL = filteredMangas.value[indexPath.row].url else { return }
-        let indexToRemove = sourceMangas.value.firstIndex(where: { $0.url == mangaURL })
+        guard let indexToRemove = sourceMangas.value.firstIndex(where: { $0.url == mangaURL }) else { return }
         var mangas = sourceMangas.value
-        mangas.remove(at: indexPath.row)
+        mangas.remove(at: indexToRemove)
         LocalStorage.shared.setLibraryMangas(to: mangas.compactMap({ $0.url }))
         sourceMangas.accept(mangas)
         filteredMangas.accept(mangas)

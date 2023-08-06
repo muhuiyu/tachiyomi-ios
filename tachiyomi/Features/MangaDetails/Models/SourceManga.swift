@@ -105,7 +105,8 @@ extension SourceManga {
         self.source = .ganma
     }
     init(from magazine: GanmaMagazine) {
-        self.url = Ganma.shared.getMangaURL(for: magazine.alias)
+        let mangaURL = Ganma.shared.getMangaURL(for: magazine.alias)
+        self.url = mangaURL
         self.title = magazine.title
         self.alias = magazine.alias
         self.author = magazine.author.penName
@@ -115,7 +116,7 @@ extension SourceManga {
         self.thumbnailURL = magazine.squareImage.url
         self.updateStrategy = nil
         self.isInitialized = true
-        self.chapters = magazine.items.enumerated().map({ $0.element.toChapter(at: $0.offset) })
+        self.chapters = magazine.items.enumerated().map({ $0.element.toChapter(at: $0.offset, for: mangaURL) })
         self.source = .ganma
     }
 }
