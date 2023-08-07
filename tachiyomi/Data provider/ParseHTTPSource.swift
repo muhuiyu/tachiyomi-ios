@@ -40,6 +40,10 @@ class ParseHTTPSource: SourceProtocol {
         fatalError("Not implemented")
     }
     
+    var isDateInReversed: Bool {
+        fatalError("Not implemented")
+    }
+    
     // MARK: - Get popular manga
     func getPopularManga(at page: Int) async -> MangaPage {
         guard let url = getPopularMangaRequest(at: page) else {
@@ -96,32 +100,16 @@ class ParseHTTPSource: SourceProtocol {
         return await getChapterPages(from: chapter.url)
     }
 
-    var popularMangaSelector: String {
-        fatalError("Not implemented")
-    }
-    
-    var popularMangaNextPageSelector: String? {
+    var popularMangaSelector: ParseHTTPSelector {
         fatalError("Not implemented")
     }
     
     // TODO: - Add latest manga
-    var latestMangaSelector: String? {
+    var latestMangaSelector: ParseHTTPSelector? {
         fatalError("Not implemented")
     }
     
-    var mangaSearchResultSelector: String {
-        fatalError("Not implemented")
-    }
-    
-    var chapterListSelector: String? {
-        fatalError("Not implemented")
-    }
-    
-    var mangaSearchResultNextPageSelector: String? {
-        fatalError("Not implemented")
-    }
-    
-    var mangaDetailsInfoSelector: String? {
+    var mangaSearchResultSelector: ParseHTTPSelector {
         fatalError("Not implemented")
     }
 
@@ -132,10 +120,10 @@ class ParseHTTPSource: SourceProtocol {
     func parsePopularMangas(from html: String) -> MangaPage {
         do {
             let doc = try SwiftSoup.parse(html)
-            let mangaElements = try doc.select(popularMangaSelector)
+            let mangaElements = try doc.select(popularMangaSelector.main)
             let mangas = mangaElements.compactMap({ parsePopularManga(from: $0) })
             
-            if let nextPageSelector = popularMangaNextPageSelector {
+            if let nextPageSelector = popularMangaSelector.nextPage {
                 let nextPage = try doc.select(nextPageSelector)
                 return MangaPage(mangas: mangas, hasNextPage: !nextPage.isEmpty)
             } else {
@@ -160,10 +148,10 @@ class ParseHTTPSource: SourceProtocol {
     func parseMangaSearchResult(from html: String) -> MangaPage {
         do {
             let doc = try SwiftSoup.parse(html)
-            let mangaElements = try doc.select(mangaSearchResultSelector)
+            let mangaElements = try doc.select(mangaSearchResultSelector.main)
             let mangas = mangaElements.compactMap({ parseSearchedManga(from: $0) })
             
-            if let nextPageSelector = mangaSearchResultNextPageSelector {
+            if let nextPageSelector = mangaSearchResultSelector.nextPage {
                 let nextPage = try doc.select(nextPageSelector)
                 return MangaPage(mangas: mangas, hasNextPage: !nextPage.isEmpty)
             } else {
@@ -219,5 +207,25 @@ extension ParseHTTPSource {
             urlComponents.queryItems?.append(URLQueryItem(name: key, value: value))
         }
         return urlComponents.url
+    }
+}
+
+struct ParseHTTPSelector {
+    let main: String
+    let link: String?
+    let title: String?
+    let image: [String]?
+    let nextPage: String?
+    let author: String?
+    let description: String?
+    
+    init(main: String, link: String? = nil, title: String? = nil, image: [String]? = nil, nextPage: String? = nil, author: String? = nil, description: String? = nil) {
+        self.main = main
+        self.link = link
+        self.title = title
+        self.image = image
+        self.nextPage = nextPage
+        self.author = author
+        self.description = description
     }
 }

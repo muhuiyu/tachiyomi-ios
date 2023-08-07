@@ -9,38 +9,30 @@ import UIKit
 import SwiftSoup
 
 class StandardHTTPSource: ParseHTTPSource {
-    // MARK: - getPopularManga
-    override var popularMangaSelector: String {
-        return "ul.series-list li a"
+    var mangaDetailsInfoSelector: ParseHTTPSelector? {
+        return ParseHTTPSelector(main: "section.series-information div.series-header",
+                                 link: nil,
+                                 title: "h1.series-header-title",
+                                 image: [ "div.series-header-image-wrapper img", "data-src" ],
+                                 nextPage: nil,
+                                 author: "h2.series-header-author",
+                                 description: "p.series-header-description")
+    }
+    var chapterListSelector: ParseHTTPSelector? {
+        return ParseHTTPSelector(main: "li.episode", link: nil, title: nil, image: nil, nextPage: nil)
     }
     
-    override var popularMangaNextPageSelector: String? {
-        return nil
-    }
-    
-    override var mangaSearchResultSelector: String {
-        return "ul.search-series-list li, ul.series-list li"
-    }
-    
-    override var mangaSearchResultNextPageSelector: String? {
-        return nil
-    }
-    
-    override var mangaDetailsInfoSelector: String? {
-        return "section.series-information div.series-header"
-    }
-    
-    override var chapterListSelector: String? {
-        return "li.episode"
-    }
+    override var isDateInReversed: Bool { return true }
     
     override internal func parsePopularManga(from element: Element) -> SourceManga? {
         do {
-            let urlString = try element.attr("href")
+            guard let linkSelector = popularMangaSelector.link, let titleSelector = popularMangaSelector.title, let thumbnailSelector = popularMangaSelector.image else { return nil }
+            
+            let urlString = try element.select(linkSelector).attr("href")
             guard let url = URL(string: urlString) else { return nil }
-            let title = try element.select("h2.series-list-title").text()
-            let thumbnailURLString = try element.select("div.series-list-thumb img").attr("data-src")
-            print("parsed", title, urlString)
+            let title = try element.select(titleSelector).text()
+            let thumbnailURLString = try element.select(thumbnailSelector[0]).attr(thumbnailSelector[1])
+            print("parsed", title, urlString, thumbnailURLString)
             guard !title.isEmpty && !thumbnailURLString.isEmpty else { return nil }
             return SourceManga(url: url.absoluteString, title: title, thumbnailURL: thumbnailURLString, sourceID: sourceID)
         } catch {
@@ -61,10 +53,12 @@ class StandardHTTPSource: ParseHTTPSource {
     
     override func parseSearchedManga(from element: Element) -> SourceManga? {
         do {
-            let urlString = try element.select("div.thmb-container a").attr("href")
+            guard let linkSelector = mangaSearchResultSelector.link, let titleSelector = mangaSearchResultSelector.title, let thumbnailSelector = mangaSearchResultSelector.image else { return nil }
+            
+            let urlString = try element.select(linkSelector).attr("href")
             guard let url = URL(string: urlString) else { return nil }
-            let title = try element.select("div.title-box p.series-title").text()
-            let thumbnailURLString = try element.select("div.thmb-container a img").attr("src")
+            let title = try element.select(titleSelector).text()
+            let thumbnailURLString = try element.select(thumbnailSelector[0]).attr(thumbnailSelector[1])
             print("parsed", title, urlString)
             guard !title.isEmpty && !thumbnailURLString.isEmpty else { return nil }
             return SourceManga(url: url.absoluteString, title: title, thumbnailURL: thumbnailURLString, sourceID: sourceID)
@@ -76,19 +70,25 @@ class StandardHTTPSource: ParseHTTPSource {
     override func parseManga(from html: String, _ urlString: String) async -> SourceManga? {
         do {
             let doc = try SwiftSoup.parse(html)
-            guard let infoSelector = mangaDetailsInfoSelector else { return nil }
-            let infoElement = try doc.select(infoSelector)
+            guard
+                let infoSelector = mangaDetailsInfoSelector?.main,
+                let titleSelector = mangaDetailsInfoSelector?.title,
+                let authorSelector = mangaDetailsInfoSelector?.author,
+                let descriptionSelector = mangaDetailsInfoSelector?.description,
+                let thumbnailSelector = mangaDetailsInfoSelector?.image
+            else { return nil }
             
+            let infoElement = try doc.select(infoSelector)
             var updatedManga = SourceManga(url: urlString,
-                                           title: try infoElement.select("h1.series-header-title").text(),
-                                           author: try infoElement.select("h2.series-header-author").text(),
-                                           description: try infoElement.select("p.series-header-description").text(),
-                                           thumbnailURL: try infoElement.select("div.series-header-image-wrapper img").attr("data-src"),
+                                           title: try infoElement.select(titleSelector).text(),
+                                           author: try infoElement.select(authorSelector).text(),
+                                           description: try infoElement.select(descriptionSelector).text(),
+                                           thumbnailURL: try infoElement.select(thumbnailSelector[0]).attr(thumbnailSelector[1]),
                                            sourceID: sourceID)
             
             if let readableProductList = try doc.select("div.js-readable-product-list").first() {
                 let chapters = await parseChapters(from: readableProductList, urlString)
-                updatedManga.chapters = chapters
+                updatedManga.chapters = isDateInReversed ? chapters.reversed() : chapters
             }
             return updatedManga
         } catch {
@@ -108,6 +108,7 @@ class StandardHTTPSource: ParseHTTPSource {
             chapters.append(contentsOf: result.chapters)
             nextURL = result.nextURL
         }
+        
         return chapters
     }
     
@@ -130,7 +131,7 @@ class StandardHTTPSource: ParseHTTPSource {
             }
             let base = try JSONDecoder().decode(ChapterListData.self, from: data)
             let doc = try SwiftSoup.parse(base.html)
-            let chapterList = try doc.select("ul.series-episode-list " + (chapterListSelector ?? ""))
+            let chapterList = try doc.select("ul.series-episode-list " + (chapterListSelector?.main ?? ""))
                 .compactMap({ parseChapter(from: $0, mangaURL) })
             
             return fetchChapterListResult(isSuccess: true,
@@ -191,11 +192,17 @@ class StandardHTTPSource: ParseHTTPSource {
                 let base = try JSONDecoder().decode(ChapterPageResponseData.self, from: jsonData)
                 let pages = base.readableProduct.pageStructure.pages.filter({ $0.type == "main" }).enumerated().map({ element in
                     print(element.element)
+                    let width: Int = element.element.width ?? 822
+                    let height: Int = element.element.height ?? 1200
                     let imageURL = ParseHTTPSource.initURL(from: element.element.src ?? "", headers: [
-                        "width": String(element.element.width ?? 822),
-                        "height": String(element.element.height ?? 1200),
+                        "width": String(width),
+                        "height": String(height),
                     ])?.absoluteString
-                    return ChapterPage(pageURL: imageURL, pageNumber: element.offset, imageURL: imageURL)
+                    return ChapterPage(pageURL: imageURL,
+                                       pageNumber: element.offset,
+                                       imageURL: imageURL,
+                                       width: CGFloat(width),
+                                       height: CGFloat(height))
                 })
                 return .success(pages)
             }

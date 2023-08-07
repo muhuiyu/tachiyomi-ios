@@ -131,7 +131,7 @@ extension LibraryViewController: UICollectionViewDataSource, UICollectionViewDel
         let margin = view.layoutMargins.left
         
         // n * (width + margin) <= windowwidth - margin
-        // width >= 185, n <= 5
+        // width >= 185, 2 <= n <= 5
         let numberOfItems = calculateMaxNumberOfItemsInRow(windowWidth: windowWidth, margin: margin)
         let width = (windowWidth - margin) / CGFloat(numberOfItems) - margin
         return CGSize(width: width, height: width * 1.5)
@@ -141,6 +141,7 @@ extension LibraryViewController: UICollectionViewDataSource, UICollectionViewDel
         let approximateN = (windowWidth - margin) / (width + margin)
         let n = Int(approximateN.rounded(.down)) // round down to nearest whole number
         if n > 5 { return 5 }   // the maximum value for n
+        if n < 2 { return 2 }   // the minimum value for n
         return n
     }
     func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemsAt indexPaths: [IndexPath], point: CGPoint) -> UIContextMenuConfiguration? {

@@ -8,16 +8,18 @@
 import Foundation
 
 class SourceRegistry {
-    static let allSourceIDs: [String] = [
-        SenManga.id,
-        Ganma.id,
-//        "booklife",
-        ShonenJumpPlus.id,
-    ]
+    static let allSourceIDs: [String] = Array(sourceIDToProviderDictionary.keys)
+    
     static let sourceIDToProviderDictionary: [String: SourceProtocol] = [
         SenManga.id: SenManga(),
         Ganma.id: Ganma(),
         ShonenJumpPlus.id: ShonenJumpPlus(),
+        ComicDays.id: ComicDays(),
+        ComicGardo.id: ComicGardo(),
+        MagComi.id: MagComi(),
+        SundayWebEvery.id: SundayWebEvery(),
+        CorocoroOnline.id: CorocoroOnline()
+        
     ]
     static func getProvider(for sourceID: String) -> SourceProtocol? {
         return sourceIDToProviderDictionary[sourceID]
@@ -26,9 +28,17 @@ class SourceRegistry {
     // TODO: - Change to check it automatically
     struct LanguageGroupedSourceIDs {
         let language: Language
-        let sourceIDs: [String]
+        var sourceIDs: [String]
     }
-    static var groupedSourceIDsByLanguage: [LanguageGroupedSourceIDs] = [
-        LanguageGroupedSourceIDs(language: .ja, sourceIDs: [ SenManga.id, Ganma.id, ShonenJumpPlus.id ])
-    ]
+    static var groupedSourceIDsByLanguage: [LanguageGroupedSourceIDs] {
+        var list = [LanguageGroupedSourceIDs]()
+        sourceIDToProviderDictionary.forEach { (key, value) in
+            if let index = list.firstIndex(where: { $0.language == value.language }) {
+                list[index].sourceIDs.append(key)
+            } else {
+                list.append(LanguageGroupedSourceIDs(language: value.language, sourceIDs: [key]))
+            }
+        }
+        return list
+    }
 }

@@ -14,6 +14,7 @@ protocol SourceProtocol {
     var name: String { get }
     var logo: String { get }
     var baseURL: String { get }
+    var isDateInReversed: Bool { get }
     
     func getPopularManga(at page: Int) async -> MangaPage
     func getManga(from urlString: String) async -> SourceManga?

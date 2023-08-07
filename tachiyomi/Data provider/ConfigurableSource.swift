@@ -34,6 +34,10 @@ class ConfigurableSource: SourceProtocol {
         fatalError("Not implemented")
     }
     
+    var isDateInReversed: Bool {
+        fatalError("Not implemented")
+    }
+    
     func getPopularManga(at page: Int) async -> MangaPage {
         fatalError("Not implemented")
     }

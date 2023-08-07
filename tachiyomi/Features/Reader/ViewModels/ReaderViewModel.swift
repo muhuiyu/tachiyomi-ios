@@ -10,7 +10,7 @@ import RxSwift
 import RxRelay
 
 class ReaderViewModel: Base.ViewModel {
-    let chapterIndex = BehaviorRelay(value: 0)
+    let chapterIndex: BehaviorRelay<Int>
     
     let chapter: BehaviorRelay<SourceChapter?> = BehaviorRelay(value: nil)
     let pages: BehaviorRelay<[ChapterPage]> = BehaviorRelay(value: [])
@@ -21,9 +21,10 @@ class ReaderViewModel: Base.ViewModel {
     var currentPageViewControllerIndex: Int? = nil
     private(set) var shouldShowNoPageFound = false
     
-    init(appCoordinator: AppCoordinator? = nil, chapters: [SourceChapter], sourceID: String) {
+    init(appCoordinator: AppCoordinator? = nil, chapters: [SourceChapter], initailChapterIndex: Int, sourceID: String) {
         self.sourceID = sourceID
         self.chapters = chapters
+        self.chapterIndex = BehaviorRelay(value: initailChapterIndex)
         super.init(appCoordinator: appCoordinator)
         configureBindings()
     }
@@ -46,21 +47,6 @@ extension ReaderViewModel {
 
 // MARK: - Data
 extension ReaderViewModel {
-    func reloadData() {
-        guard let chapter = chapter.value, let provider = SourceRegistry.getProvider(for: sourceID) else { return }
-        Task {
-            let result = await provider.getChapterPages(from: chapter)
-            switch result {
-            case .failure(let error):
-                print("Error: ", error.localizedDescription)
-                self.shouldShowNoPageFound = true
-                pages.accept([])
-            case .success(let fetchedPages):
-                pages.accept(fetchedPages)
-            }
-            restoreLastSession()
-        }
-    }
     func loadNextChapter() {
         if canLoadNextChapter {
             chapterIndex.accept(chapterIndex.value + 1)
@@ -76,10 +62,12 @@ extension ReaderViewModel {
     }
     func saveCurrentSession() {
         guard let chapterURL = chapter.value?.url, let mangaURL = chapter.value?.mangaURL else { return }
-        if isReadingLastPage {
+        if isReadingLastPage && canLoadNextChapter {
             let nextChapterURL = chapters[chapterIndex.value+1].url
             LocalStorage.shared.clearLastReadPageNumber(for: chapterURL)    // remove page bookmark from current chapter
-            LocalStorage.shared.saveLastReadPageNumber(currentPage.value, for: nextChapterURL) // save next chapter instead
+            LocalStorage.shared.saveLastReadPageNumber(0, for: nextChapterURL) // save next chapter instead
+        } else {
+            LocalStorage.shared.saveLastReadPageNumber(currentPage.value, for: chapterURL)
         }
         LocalStorage.shared.saveLastReadChapterURL(chapterURL, for: mangaURL)
     }
@@ -133,10 +121,33 @@ extension ReaderViewModel {
         if pageIndex >= numberOfPages { return nil }
         return pages.value[pageIndex].imageURL
     }
+    func getImageWidth(at pageIndex: Int) -> CGFloat? {
+        if pageIndex >= numberOfPages { return nil }
+        return pages.value[pageIndex].width
+    }
+    func getImageHeight(at pageIndex: Int) -> CGFloat? {
+        if pageIndex >= numberOfPages { return nil }
+        return pages.value[pageIndex].height
+    }
 }
 
 // MARK: - Private methods
 extension ReaderViewModel {
+    private func reloadData() {
+        guard let chapter = chapter.value, let provider = SourceRegistry.getProvider(for: sourceID) else { return }
+        Task {
+            let result = await provider.getChapterPages(from: chapter)
+            switch result {
+            case .failure(let error):
+                print("Error: ", error.localizedDescription)
+                self.shouldShowNoPageFound = true
+                pages.accept([])
+            case .success(let fetchedPages):
+                pages.accept(fetchedPages)
+            }
+            restoreLastSession()
+        }
+    }
     private func fetchImageURL(at pageIndex: Int) async {
         guard
             pageIndex <= numberOfPages,

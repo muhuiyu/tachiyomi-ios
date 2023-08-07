@@ -1,5 +1,5 @@
 //
-//  ShonenJumpPlus.swift
+//  SundayWebEvery.swift
 //  tachiyomi
 //
 //  Created by Grace, Mu-Hui Yu on 8/6/23.
@@ -7,20 +7,20 @@
 
 import Foundation
 
-class ShonenJumpPlus: StandardHTTPSource {
-    static let id = "shonenJumpPlus"
-    override var sourceID: String { return ShonenJumpPlus.id }
+class SundayWebEvery: StandardHTTPSource {
+    static let id = "sundayWebEvery"
+    override var sourceID: String { return SundayWebEvery.id }
     override var language: Language { return .ja }
     override var supportsLatest: Bool { return true }
-    override var name: String { return "少年ジャンプ+" }
-    override var logo: String { return "shonen-jump-logo" }
-    override var baseURL: String { return "https://shonenjumpplus.com" }
+    override var name: String { return "サンデーうぇぶり" }
+    override var logo: String { return "sunday-web-every-logo" }
+    override var baseURL: String { return "https://www.sunday-webry.com" }
     
     override var popularMangaSelector: ParseHTTPSelector {
-        return ParseHTTPSelector(main: "ul.series-list li",
-                                 link: "a",
-                                 title: "a h2.series-list-title",
-                                 image: [ "a div.series-list-thumb img", "data-src" ],
+        return ParseHTTPSelector(main: "ul.webry-series-list li",
+                                 link: "a.webry-series-item-link",
+                                 title: "a.webry-series-item-link h4.series-title",
+                                 image: [ "a.webry-series-item-link div.thumb-wrapper img", "data-src" ],
                                  nextPage: nil)
     }
     override var mangaSearchResultSelector: ParseHTTPSelector {
@@ -31,3 +31,4 @@ class ShonenJumpPlus: StandardHTTPSource {
                                  nextPage: nil)
     }
 }
+

@@ -24,7 +24,9 @@ class MangaViewModel: Base.ViewModel {
 
 extension MangaViewModel {
     var firstChapterIndex: Int {
-        return manga.value?.chapters.count ?? 0
+//        guard let manga = manga.value else { return 0 }
+//        return manga.chapters.count - 1
+        return 0
     }
     var lastReadChapterName: String? {
         if let index = lastReadChapterIndex.value {

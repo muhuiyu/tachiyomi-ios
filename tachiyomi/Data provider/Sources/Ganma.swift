@@ -17,6 +17,7 @@ class Ganma: ConfigurableSource {
     override var name: String { return "ガンマ" }
     override var logo: String { return "ganma-logo" }
     override var baseURL: String { return "https://ganma.jp" }
+    override var isDateInReversed: Bool { return false }
     
     override func getPopularManga(at page: Int) async -> MangaPage {
         guard let request = getPopularMangaRequest(at: page) else {

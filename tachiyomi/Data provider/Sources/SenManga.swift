@@ -16,21 +16,22 @@ class SenManga: ParseHTTPSource {
     override var name: String { return "SenManga" }
     override var logo: String { return "sen-manga-logo" }
     override var baseURL: String { return "https://raw.senmanga.com" }
+    override var isDateInReversed: Bool { return true }
     
-    override var popularMangaSelector: String {
-        return "div.mng"
+    override var popularMangaSelector: ParseHTTPSelector {
+        return ParseHTTPSelector(main: "div.mng",
+                                 link: nil,
+                                 title: nil,
+                                 image: nil,
+                                 nextPage: "ul.pagination a[rel=next]")
     }
     
-    override var popularMangaNextPageSelector: String? {
-        return "ul.pagination a[rel=next]"
-    }
-    
-    override var mangaSearchResultSelector: String {
-        return "div.mng"
-    }
-    
-    override var mangaSearchResultNextPageSelector: String? {
-        return "ul.pagination a[rel=next]"
+    override var mangaSearchResultSelector: ParseHTTPSelector {
+        return ParseHTTPSelector(main: "div.mng",
+                                 link: nil,
+                                 title: nil,
+                                 image: nil,
+                                 nextPage: "ul.pagination a[rel=next]")
     }
     
     // MARK: - getPopularManga
@@ -120,7 +121,7 @@ class SenManga: ParseHTTPSource {
                     let chapterNumber = name.firstMatch(of: numberRegex)?.0 ?? "1"
                     return SourceChapter(url: url, name: name, uploadedDate: time, chapterNumber: String(chapterNumber), mangaURL: urlString)
                 }
-            updatedManga.chapters = chapters
+            updatedManga.chapters = isDateInReversed ? chapters.reversed() : chapters
             return updatedManga
         } catch {
             return nil

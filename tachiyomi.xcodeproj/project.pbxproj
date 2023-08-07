@@ -83,6 +83,12 @@
 		E4D1C0A32A806C4200BFF1A4 /* SourceRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4D1C0A22A806C4200BFF1A4 /* SourceRegistry.swift */; };
 		E4D1C0A52A806E5500BFF1A4 /* ShonenJumpPlus.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4D1C0A42A806E5500BFF1A4 /* ShonenJumpPlus.swift */; };
 		E4D1C0A82A8081CC00BFF1A4 /* SkeletonView in Frameworks */ = {isa = PBXBuildFile; productRef = E4D1C0A72A8081CC00BFF1A4 /* SkeletonView */; };
+		E4D1C0AA2A809EE700BFF1A4 /* ComicDays.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4D1C0A92A809EE700BFF1A4 /* ComicDays.swift */; };
+		E4D1C0AC2A809F5F00BFF1A4 /* ComicGardo.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4D1C0AB2A809F5F00BFF1A4 /* ComicGardo.swift */; };
+		E4D1C0AE2A809FD000BFF1A4 /* MagComi.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4D1C0AD2A809FD000BFF1A4 /* MagComi.swift */; };
+		E4D1C0B02A80A07E00BFF1A4 /* SundayWebEvery.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4D1C0AF2A80A07E00BFF1A4 /* SundayWebEvery.swift */; };
+		E4D1C0B22A80A24D00BFF1A4 /* CorocoroOnline.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4D1C0B12A80A24D00BFF1A4 /* CorocoroOnline.swift */; };
+		E4D1C0B42A8145F100BFF1A4 /* UUID+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4D1C0B32A8145F100BFF1A4 /* UUID+Extensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -157,6 +163,12 @@
 		E4D1C0A02A802FDF00BFF1A4 /* StandardHTTPSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StandardHTTPSource.swift; sourceTree = "<group>"; };
 		E4D1C0A22A806C4200BFF1A4 /* SourceRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceRegistry.swift; sourceTree = "<group>"; };
 		E4D1C0A42A806E5500BFF1A4 /* ShonenJumpPlus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShonenJumpPlus.swift; sourceTree = "<group>"; };
+		E4D1C0A92A809EE700BFF1A4 /* ComicDays.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComicDays.swift; sourceTree = "<group>"; };
+		E4D1C0AB2A809F5F00BFF1A4 /* ComicGardo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComicGardo.swift; sourceTree = "<group>"; };
+		E4D1C0AD2A809FD000BFF1A4 /* MagComi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MagComi.swift; sourceTree = "<group>"; };
+		E4D1C0AF2A80A07E00BFF1A4 /* SundayWebEvery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SundayWebEvery.swift; sourceTree = "<group>"; };
+		E4D1C0B12A80A24D00BFF1A4 /* CorocoroOnline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorocoroOnline.swift; sourceTree = "<group>"; };
+		E4D1C0B32A8145F100BFF1A4 /* UUID+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UUID+Extensions.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -299,6 +311,7 @@
 				E44E2B382A7C396900669192 /* UIStack+RemoveAll.swift */,
 				E44E2B392A7C396900669192 /* UINavigationController+Extensions.swift */,
 				E44E2B3F2A7C396900669192 /* Date+Extensions.swift */,
+				E4D1C0B32A8145F100BFF1A4 /* UUID+Extensions.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -594,6 +607,11 @@
 				E4C27C5C2A7E2F1F00372B8D /* Ganma.swift */,
 				E4C27C622A7F2DCE00372B8D /* Booklife.swift */,
 				E4D1C0A42A806E5500BFF1A4 /* ShonenJumpPlus.swift */,
+				E4D1C0A92A809EE700BFF1A4 /* ComicDays.swift */,
+				E4D1C0AB2A809F5F00BFF1A4 /* ComicGardo.swift */,
+				E4D1C0AD2A809FD000BFF1A4 /* MagComi.swift */,
+				E4D1C0AF2A80A07E00BFF1A4 /* SundayWebEvery.swift */,
+				E4D1C0B12A80A24D00BFF1A4 /* CorocoroOnline.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -702,6 +720,7 @@
 				E4D1C0A12A802FDF00BFF1A4 /* StandardHTTPSource.swift in Sources */,
 				E46B12B02A7C4F60003E4C1D /* MangaPreviewCell.swift in Sources */,
 				E44E2B422A7C396900669192 /* IconButton.swift in Sources */,
+				E4D1C0B22A80A24D00BFF1A4 /* CorocoroOnline.swift in Sources */,
 				E46B129C2A7C49D6003E4C1D /* UpdatesViewController.swift in Sources */,
 				E46B12AB2A7C4B38003E4C1D /* HistoryViewModel.swift in Sources */,
 				E46B129E2A7C4A16003E4C1D /* Base.swift in Sources */,
@@ -730,10 +749,13 @@
 				E46B12B22A7C52E9003E4C1D /* SourceCatalogViewController.swift in Sources */,
 				E44E2B602A7C396900669192 /* UIStack+RemoveAll.swift in Sources */,
 				E46B12BD2A7C55FB003E4C1D /* SourceManga.swift in Sources */,
+				E4D1C0B02A80A07E00BFF1A4 /* SundayWebEvery.swift in Sources */,
 				E46B12A62A7C4B0A003E4C1D /* SettingsViewModel.swift in Sources */,
+				E4D1C0AC2A809F5F00BFF1A4 /* ComicGardo.swift in Sources */,
 				E44E2B532A7C396900669192 /* UIFont+Theme.swift in Sources */,
 				E44E2AE62A7C390000669192 /* AppDelegate.swift in Sources */,
 				E44E2B572A7C396900669192 /* ViewController.swift in Sources */,
+				E4D1C0AA2A809EE700BFF1A4 /* ComicDays.swift in Sources */,
 				E46B12C72A7C625A003E4C1D /* SenManga.swift in Sources */,
 				E46B12902A7C4957003E4C1D /* LibraryViewController.swift in Sources */,
 				E44E2B4C2A7C396900669192 /* ErrorHandler.swift in Sources */,
@@ -741,6 +763,7 @@
 				E4C27C692A7F844000372B8D /* ReaderEndPageViewController.swift in Sources */,
 				E4C27C5F2A7E984700372B8D /* ConfigurableSource.swift in Sources */,
 				E46B12EA2A7DACAD003E4C1D /* ReaderLoadingViewController.swift in Sources */,
+				E4D1C0AE2A809FD000BFF1A4 /* MagComi.swift in Sources */,
 				E46B12AD2A7C4B48003E4C1D /* UpdatesViewModel.swift in Sources */,
 				E46B12D42A7C8594003E4C1D /* MangaDetailsHeaderCell.swift in Sources */,
 				E44E2B562A7C396900669192 /* Enum.swift in Sources */,
@@ -749,6 +772,7 @@
 				E46B12C52A7C61A9003E4C1D /* MangasPage.swift in Sources */,
 				E44E2B612A7C396900669192 /* UINavigationController+Extensions.swift in Sources */,
 				E46B12F12A7DBE1E003E4C1D /* ReaderNoPageFoundViewController.swift in Sources */,
+				E4D1C0B42A8145F100BFF1A4 /* UUID+Extensions.swift in Sources */,
 				E44E2AE82A7C390000669192 /* SceneDelegate.swift in Sources */,
 				E46B12E22A7D72D5003E4C1D /* ReaderViewController.swift in Sources */,
 			);
@@ -896,6 +920,7 @@
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.3;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -923,6 +948,7 @@
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.3;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

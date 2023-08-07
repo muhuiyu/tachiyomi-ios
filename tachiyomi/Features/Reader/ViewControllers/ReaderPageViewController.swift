@@ -69,17 +69,25 @@ extension ReaderPageViewController {
         guard let imageURLString = readerViewModel.getImageURL(at: pageIndex) else { return }
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
+            
+            let placeholder = UIImage(systemName: Icons.photoFill)
+            // TODO: - Change to proper prefix
             if imageURLString.starts(with: "https://cdn") {
+                self.imageView.image = placeholder
+                guard
+                    let width = readerViewModel.getImageWidth(at: pageIndex),
+                    let height = readerViewModel.getImageHeight(at: pageIndex)
+                else { return }
                 Task {
                     if let image = await self.downloadImage(from: imageURLString) {
                         DispatchQueue.main.async { [weak self] in
-                            self?.imageView.image = self?.complexDrawingAndCellShifting(image: image, width: 822, height: 1200)
+                            self?.imageView.image = self?.complexDrawingAndCellShifting(image: image, width: width, height: height)
                         }
                     }
                 }
                 
             } else {
-                self.imageView.kf.setImage(with: URL(string: imageURLString), placeholder: UIImage(systemName: Icons.photoFill))
+                self.imageView.kf.setImage(with: URL(string: imageURLString), placeholder: placeholder)
             }
         }
     }

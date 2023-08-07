@@ -65,7 +65,7 @@ extension LocalStorage {
     }
     func addToLibrary(for mangaURL: String, from sourceID: String) {
         var mangas = getSavedMangas()
-        mangas.append(LibraryManga(sourceID: sourceID, mangaURL: mangaURL))
+        mangas.insert(LibraryManga(sourceID: sourceID, mangaURL: mangaURL), at: 0)
         
         if let encoded = try? JSONEncoder().encode(mangas) {
             UserDefaults.standard.set(encoded, forKey: LocalStorage.libraryMangaURLsKey)
