@@ -9,29 +9,13 @@ import UIKit
 import SwiftSoup
 
 class SenManga: ParseHTTPSource {
-    static let shared = SenManga()
-    
-    override var language: Language {
-        return .ja
-    }
-    
-    override var supportsLatest: Bool {
-        return true
-    }
-    
-    override var name: String {
-        return "Sen Manga"
-    }
-    
-    override var baseURL: String {
-        return "https://raw.senmanga.com"
-    }
+    static let shared = SenManga(source: .senManga)
     
     override var popularMangaSelector: String {
         return "div.mng"
     }
     
-    override var popularMangaNextPageSelector: String {
+    override var popularMangaNextPageSelector: String? {
         return "ul.pagination a[rel=next]"
     }
     
@@ -39,7 +23,7 @@ class SenManga: ParseHTTPSource {
         return "div.mng"
     }
     
-    override var mangaSearchResultNextPageSelector: String {
+    override var mangaSearchResultNextPageSelector: String? {
         return "ul.pagination a[rel=next]"
     }
     
@@ -58,7 +42,7 @@ class SenManga: ParseHTTPSource {
             let thumbnailURLString = try element.select(".cover img").attr("src")
             print("parsed", title, urlString)
             guard !title.isEmpty && !thumbnailURLString.isEmpty && thumbnailURLString != defaultImageURL else { return nil }
-            return SourceManga(url: url.absoluteString, title: title, thumbnailURL: thumbnailURLString, source: .senManga)
+            return SourceManga(url: url.absoluteString, title: title, thumbnailURL: thumbnailURLString, source: source)
         } catch {
             return nil
         }
@@ -83,7 +67,7 @@ class SenManga: ParseHTTPSource {
             let thumbnailURLString = try element.select("img").attr("data-src")
             print("parsed", title, urlString)
             guard !title.isEmpty && !thumbnailURLString.isEmpty && thumbnailURLString != defaultImageURL else { return nil }
-            return SourceManga(url: url.absoluteString, title: title, thumbnailURL: thumbnailURLString, source: .senManga)
+            return SourceManga(url: url.absoluteString, title: title, thumbnailURL: thumbnailURLString, source: source)
         } catch {
             return nil
         }
@@ -93,13 +77,13 @@ class SenManga: ParseHTTPSource {
     override func parseManga(from html: String, _ urlString: String) -> SourceManga? {
         do {
             let doc = try SwiftSoup.parse(html)
-            var updatedManga = SourceManga(source: .senManga)
-            
-            updatedManga.url = urlString
-            updatedManga.title = try doc.select("h1.series").text()
-            updatedManga.author = try doc.select("h1.series").text()
-            updatedManga.thumbnailURL = try doc.select("div.cover").select("img").attr("src")
-            
+            var updatedManga = SourceManga(url: urlString,
+                                           title: try doc.select("h1.series").text(),
+                                           author: try doc.select("h1.series").text(),
+                                           description: try doc.select("div.summary").text(),
+                                           thumbnailURL: try doc.select("div.cover").select("img").attr("src"),
+                                           source: source)
+    
             let info = try doc.select("div")
                 .filter({ $0.hasClass("items") })
             
@@ -119,9 +103,6 @@ class SenManga: ParseHTTPSource {
                     break
                 }
             }
-            
-            let summary = try doc.select("div.summary").text()
-            updatedManga.description = summary
             
             let chapters = try doc.select("ul.chapter-list").select("li")
                 .map { chapter in
@@ -132,52 +113,6 @@ class SenManga: ParseHTTPSource {
                     let numberRegex = Regex(/\d+(\.\d+)?/)
                     let chapterNumber = name.firstMatch(of: numberRegex)?.0 ?? "1"
                     return SourceChapter(url: url, name: name, uploadedDate: time, chapterNumber: String(chapterNumber), mangaURL: urlString)
-                }
-            updatedManga.chapters = chapters
-            return updatedManga
-        } catch {
-            return nil
-        }
-    }
-
-    // MARK: - parseManga with partialSourceManga
-    override func parseManga(from html: String, _ partialSourceManga: SourceManga) -> SourceManga? {
-        do {
-            let doc = try SwiftSoup.parse(html)
-            var updatedManga = partialSourceManga
-            
-            let info = try doc.select("div")
-                .filter({ $0.hasClass("items") })
-            
-            for eachInfo in info {
-                let type = try eachInfo.select("strong").text()
-                switch type.lowercased() {
-                case "genres":
-                    updatedManga.genres = try eachInfo.select("a").eachText()
-                case "author":
-                    updatedManga.author = try eachInfo.text()
-                case "status":
-                    let statusRawValue = try eachInfo.text()
-                    if let newStatus = SourceManga.Status(rawValue: statusRawValue.lowercased()) {
-                        updatedManga.status = newStatus
-                    }
-                default:
-                    break
-                }
-            }
-            
-            let summary = try doc.select("div.summary").text()
-            updatedManga.description = summary
-            
-            let chapters = try doc.select("ul.chapter-list").select("li")
-                .map { chapter in
-                    let url = try chapter.select("a").first?.attr("href") ?? ""
-                    let name = try chapter.select("a").first?.text() ?? ""
-                    let time = try chapter.select("time[datetime]").text()
-                    
-                    let numberRegex = Regex(/\d+(\.\d+)?/)
-                    let chapterNumber = name.firstMatch(of: numberRegex)?.0 ?? "1"
-                    return SourceChapter(url: url, name: name, uploadedDate: time, chapterNumber: String(chapterNumber), mangaURL: partialSourceManga.url)
                 }
             updatedManga.chapters = chapters
             return updatedManga

@@ -9,23 +9,7 @@ import UIKit
 import SwiftSoup
 
 class Ganma: ConfigurableSource {
-    static let shared = Ganma()
-    
-    override var language: Language {
-        return Source.ganma.language
-    }
-    
-    override var supportsLatest: Bool {
-        return true
-    }
-    
-    override var name: String {
-        return Source.ganma.name
-    }
-    
-    override var baseURL: String {
-        return "https://ganma.jp"
-    }
+    static let shared = Ganma(source: .ganma)
     
     override func getPopularManga(at page: Int) async -> MangaPage {
         guard let request = getPopularMangaRequest(at: page) else {

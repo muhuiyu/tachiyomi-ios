@@ -8,6 +8,7 @@
 import Foundation
 
 protocol SourceProtocol {
+    var source: Source { get set }
     var language: Language { get }
     var supportsLatest: Bool { get }
     var name: String { get }

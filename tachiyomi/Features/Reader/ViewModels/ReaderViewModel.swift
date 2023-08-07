@@ -63,7 +63,7 @@ extension ReaderViewModel {
                 let fetchedPages = Ganma.shared.getChapterPages(from: page)
                 pages.accept(fetchedPages)
                 restoreLastSession()
-            case .booklive:
+            case .shonenJumpPlus:
                 return 
             }
         }

@@ -33,22 +33,27 @@ extension MangaViewModel {
         return nil
     }
     func reloadData() {
-        guard let manga = manga.value, let url = manga.url else { return }
+        guard let url = manga.value?.url else { return }
         isLoading.accept(true)
         Task {
             switch source {
             case .senManga:
-                let updatedManga = await SenManga.shared.getManga(from: url, manga)
+                let updatedManga = await SenManga.shared.getManga(from: url)
                 self.manga.accept(updatedManga)
                 isLoading.accept(false)
             case .ganma:
                 let updatedManga = await Ganma.shared.getManga(from: url)
                 self.manga.accept(updatedManga)
                 isLoading.accept(false)
-            case .booklive:
-                let updatedManga = await Booklife.shared.getManga(from: url)
-                self.manga.accept(updatedManga)
-                isLoading.accept(false)
+            case .shonenJumpPlus:
+                if let source = LocalStorage.shared.standardSources[.shonenJumpPlus] {
+                    let updatedManga = await source.getManga(from: url)
+                    self.manga.accept(updatedManga)
+                    isLoading.accept(false)
+                } else {
+                    self.manga.accept(nil)
+                    isLoading.accept(false)
+                }
             }
         }
     }

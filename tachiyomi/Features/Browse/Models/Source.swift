@@ -10,24 +10,24 @@ import Foundation
 enum Source: CaseIterable, Codable {
     case senManga
     case ganma
-    case booklive
+    case shonenJumpPlus
 
-    // Other sources 
+    // Other sources to do: corocoroonline, comicdays, comicgardo, kuragebranch, magcomi, sundayWebEvery, tonarinoyoungjump
     
     var name: String {
         switch self {
         case .senManga:
             return "Sen Manga"
         case .ganma:
-            return "Ganma"
-        case .booklive:
-            return "Booklive"
+            return "ガンマ"
+        case .shonenJumpPlus:
+            return "少年ジャンプ+"
         }
     }
     
     var language: Language {
         switch self {
-        case .senManga, .ganma, .booklive:
+        case .senManga, .ganma, .shonenJumpPlus:
             return .ja
         }
     }
@@ -38,7 +38,7 @@ enum Source: CaseIterable, Codable {
             return [.popular, .latest]
         case .ganma:
             return [.popular]
-        case .booklive:
+        case .shonenJumpPlus:
             return [.popular, .latest]
         }
     }
@@ -49,8 +49,19 @@ enum Source: CaseIterable, Codable {
             return "sen-manga-logo"
         case .ganma:
             return "ganma-logo"
-        case .booklive:
-            return "booklive-logo"
+        case .shonenJumpPlus:
+            return "shonen-jump-logo"
+        }
+    }
+    
+    var baseURL: String {
+        switch self {
+        case .senManga:
+            return "https://raw.senmanga.com"
+        case .ganma:
+            return "https://ganma.jp"
+        case .shonenJumpPlus:
+            return "https://shonenjumpplus.com"
         }
     }
 }

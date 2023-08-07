@@ -70,9 +70,13 @@ extension SourceViewModel {
         case .ganma:
             // haven't completed search function yet
             return await Ganma.shared.getPopularManga(at: currentPage)
-        case .booklive:
+        case .shonenJumpPlus:
             // haven't completed search function yet
-            return await Booklife.shared.getPopularManga(at: currentPage)
+            if let source = LocalStorage.shared.standardSources[.shonenJumpPlus] {
+                return await source.getPopularManga(at: currentPage)
+            } else {
+                return MangaPage(mangas: [], hasNextPage: false)
+            }
         }
     }
 }

@@ -14,41 +14,53 @@ struct MangaPage {
 }
 
 class ParseHTTPSource: SourceProtocol {
+    var source: Source
+    
+    var shouldFetchChapterAsynchronously: Bool { return true }
+    
+    init(source: Source) {
+        self.source = source
+    }
     
     // MARK: - Basic information
     var language: Language {
-        // Should be implemented in subclass
-        return .ja
+        return source.language
     }
     
     var supportsLatest: Bool {
-        // Should be implemented in subclass
-        return true
+        return source.filters.contains(.latest)
     }
     
     var name: String {
-        return "Should be implemented in subclass"
+        return source.name
     }
     
     var baseURL: String {
-        return "Should be implemented in subclass"
+        return source.baseURL
     }
     
     var popularMangaSelector: String {
         return "Should be implemented in subclass"
     }
     
-    var popularMangaNextPageSelector: String {
-       return "Should be implemented in subclass"
+    var popularMangaNextPageSelector: String? { return nil }
+    
+    // TODO: - Add latest manga
+    var latestMangaSelector: String? {
+        return "Should be implemented in subclass"
     }
     
     var mangaSearchResultSelector: String {
         return "Should be implemented in subclass"
     }
     
-    var mangaSearchResultNextPageSelector: String {
-       return "Should be implemented in subclass"
+    var chapterListSelector: String? {
+        return "Should be implemented in subclass"
     }
+    
+    var mangaSearchResultNextPageSelector: String? { return nil }
+    
+    var mangaDetailsInfoSelector: String? { return nil }
     
     // MARK: - Get popular manga
     func getPopularManga(at page: Int) async -> MangaPage {
@@ -69,18 +81,21 @@ class ParseHTTPSource: SourceProtocol {
         }
     }
     
-    internal func getPopularMangaRequest(at page: Int) -> URL? {
-        // Should be implemented in subclass
-        return nil
-    }
+    internal func getPopularMangaRequest(at page: Int) -> URL? { return nil }
     
     internal func parsePopularMangas(from html: String) -> MangaPage {
         do {
             let doc = try SwiftSoup.parse(html)
             let mangaElements = try doc.select(popularMangaSelector)
             let mangas = mangaElements.compactMap({ parsePopularManga(from: $0) })
-            let nextPage = try doc.select(popularMangaNextPageSelector)
-            return MangaPage(mangas: mangas, hasNextPage: !nextPage.isEmpty)
+            
+            if let nextPageSelector = popularMangaNextPageSelector {
+                let nextPage = try doc.select(nextPageSelector)
+                return MangaPage(mangas: mangas, hasNextPage: !nextPage.isEmpty)
+            } else {
+                return MangaPage(mangas: mangas, hasNextPage: false)
+            }
+            
         } catch {
             print("An error occurred: \(error)")
             return MangaPage(mangas: [], hasNextPage: false)
@@ -120,8 +135,14 @@ class ParseHTTPSource: SourceProtocol {
             let doc = try SwiftSoup.parse(html)
             let mangaElements = try doc.select(mangaSearchResultSelector)
             let mangas = mangaElements.compactMap({ parseSearchedManga(from: $0) })
-            let nextPage = try doc.select(mangaSearchResultNextPageSelector)
-            return MangaPage(mangas: mangas, hasNextPage: !nextPage.isEmpty)
+            
+            if let nextPageSelector = mangaSearchResultNextPageSelector {
+                let nextPage = try doc.select(nextPageSelector)
+                return MangaPage(mangas: mangas, hasNextPage: !nextPage.isEmpty)
+            } else {
+                return MangaPage(mangas: mangas, hasNextPage: false)
+            }
+            
         } catch {
             print("An error occurred: \(error)")
             return MangaPage(mangas: [], hasNextPage: false)
@@ -143,7 +164,11 @@ class ParseHTTPSource: SourceProtocol {
             guard let contents = String(data: data, encoding: .utf8) else {
                 return nil
             }
-            return parseManga(from: contents, urlString)
+            if shouldFetchChapterAsynchronously {
+                return await parseMangaAsynchronously(from: contents, urlString)
+            } else {
+                return parseManga(from: contents, urlString)
+            }
         } catch {
             print("An error occurred: \(error)")
             return nil
@@ -155,24 +180,7 @@ class ParseHTTPSource: SourceProtocol {
         return nil
     }
     
-    // MARK: - Get manga from url with partialManga
-    func getManga(from urlString: String, _ partialSourceManga: SourceManga) async -> SourceManga? {
-        guard let url = URL(string: urlString) else {
-            return nil
-        }
-        do {
-            let (data, _) = try await URLSession.shared.data(from: url)
-            guard let contents = String(data: data, encoding: .utf8) else {
-                return nil
-            }
-            return parseManga(from: contents, partialSourceManga)
-        } catch {
-            print("An error occurred: \(error)")
-            return nil
-        }
-    }
-    
-    internal func parseManga(from html: String, _ partialSourceManga: SourceManga) -> SourceManga? {
+    internal func parseMangaAsynchronously(from html: String, _ urlString: String) async -> SourceManga? {
         // Should be implemented in subclass
         return nil
     }

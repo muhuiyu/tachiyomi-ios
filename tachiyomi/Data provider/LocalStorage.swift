@@ -10,6 +10,11 @@ import UIKit
 class LocalStorage {
     static let shared: LocalStorage = LocalStorage()
     
+    // Sources
+    private(set) var standardSources: [Source: StandardHTTPSource] = [
+        .shonenJumpPlus: StandardHTTPSource(source: .shonenJumpPlus)
+    ]
+    
     // keys
     static var libraryMangaURLsKey: String { "k_library_manga_urls" }
     

@@ -7,22 +7,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "1DAAA96C-CD04-4F7D-97F9-E5171103FC33"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "tachiyomi/Data provider/ParseHTTPSource.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "79"
-            endingLineNumber = "79"
-            landmarkName = "parsePopularMangas(from:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "40F69B34-6F42-4B69-9CE7-E315B2311302"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
@@ -118,84 +102,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "ADEDED55-FF35-4F72-859D-7436F4679CCD"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "tachiyomi/Data provider/ParseHTTPSource.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "58"
-            endingLineNumber = "58"
-            landmarkName = "getPopularManga(at:)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "ADEDED55-FF35-4F72-859D-7436F4679CCD - c2e373b00666db0a"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(1) suspend resume partial function for tachiyomi.ParseHTTPSource.getPopularManga(at: Swift.Int) async -&gt; tachiyomi.MangaPage"
-                  moduleName = "tachiyomi"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/muyu/Dev/mine/tachiyomi-copycat/ios/tachiyomi/tachiyomi/Data%20provider/ParseHTTPSource.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "60"
-                  endingLineNumber = "60"
-                  offsetFromSymbolStart = "212">
-               </Location>
-               <Location
-                  uuid = "ADEDED55-FF35-4F72-859D-7436F4679CCD - 78748144dbab91fc"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(2) await resume partial function for tachiyomi.ParseHTTPSource.getPopularManga(at: Swift.Int) async -&gt; tachiyomi.MangaPage"
-                  moduleName = "tachiyomi"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/muyu/Dev/mine/tachiyomi-copycat/ios/tachiyomi/tachiyomi/Data%20provider/ParseHTTPSource.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "60"
-                  endingLineNumber = "60"
-                  offsetFromSymbolStart = "40">
-               </Location>
-               <Location
-                  uuid = "ADEDED55-FF35-4F72-859D-7436F4679CCD - 5f115c14ac4d9704"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(3) suspend resume partial function for tachiyomi.ParseHTTPSource.getPopularManga(at: Swift.Int) async -&gt; tachiyomi.MangaPage"
-                  moduleName = "tachiyomi"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/muyu/Dev/mine/tachiyomi-copycat/ios/tachiyomi/tachiyomi/Data%20provider/ParseHTTPSource.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "60"
-                  endingLineNumber = "60"
-                  offsetFromSymbolStart = "60">
-               </Location>
-               <Location
-                  uuid = "ADEDED55-FF35-4F72-859D-7436F4679CCD - e1583626e158f507"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(4) suspend resume partial function for tachiyomi.ParseHTTPSource.getPopularManga(at: Swift.Int) async -&gt; tachiyomi.MangaPage"
-                  moduleName = "tachiyomi"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/muyu/Dev/mine/tachiyomi-copycat/ios/tachiyomi/tachiyomi/Data%20provider/ParseHTTPSource.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "60"
-                  endingLineNumber = "60"
-                  offsetFromSymbolStart = "68">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "C33194C2-66EE-42B6-A85A-031340CFFB87"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
@@ -244,97 +150,17 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "E06FBA6F-802F-4879-8887-EC432A65F93B"
+            uuid = "9AAF1786-11F5-43A3-BA7F-158B571B25AC"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "tachiyomi/Data provider/ParseHTTPSource.swift"
+            filePath = "tachiyomi/Data provider/StandardHTTPSource.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "80"
-            endingLineNumber = "80"
-            landmarkName = "parsePopularMangas(from:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "0D39ED42-5BE5-4F29-ADA3-E080DFF69B0C"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "tachiyomi/Data provider/ParseHTTPSource.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "81"
-            endingLineNumber = "81"
-            landmarkName = "parsePopularMangas(from:)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "0D39ED42-5BE5-4F29-ADA3-E080DFF69B0C - 7c34046ad2d1f64f"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "tachiyomi.ParseHTTPSource.parsePopularMangas(from: Swift.String) -&gt; tachiyomi.MangaPage"
-                  moduleName = "tachiyomi"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/muyu/Dev/mine/tachiyomi-copycat/ios/tachiyomi/tachiyomi/Data%20provider/ParseHTTPSource.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "81"
-                  endingLineNumber = "81"
-                  offsetFromSymbolStart = "252">
-               </Location>
-               <Location
-                  uuid = "0D39ED42-5BE5-4F29-ADA3-E080DFF69B0C - 907296cc572b1f22"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (SwiftSoup.Element) -&gt; Swift.Optional&lt;tachiyomi.SourceManga&gt; in tachiyomi.ParseHTTPSource.parsePopularMangas(from: Swift.String) -&gt; tachiyomi.MangaPage"
-                  moduleName = "tachiyomi"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/muyu/Dev/mine/tachiyomi-copycat/ios/tachiyomi/tachiyomi/Data%20provider/ParseHTTPSource.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "81"
-                  endingLineNumber = "81"
-                  offsetFromSymbolStart = "52">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "B8B3B6D1-2164-4A2B-B9E1-92B01B677C8C"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "tachiyomi/Data provider/ParseHTTPSource.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "82"
-            endingLineNumber = "82"
-            landmarkName = "parsePopularMangas(from:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "B63D8DC1-832D-4A13-A32F-9BCB4FC74E09"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "tachiyomi/Data provider/ParseHTTPSource.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "83"
-            endingLineNumber = "83"
-            landmarkName = "parsePopularMangas(from:)"
-            landmarkType = "7">
+            startingLineNumber = "84"
+            endingLineNumber = "84"
+            landmarkName = "parseMangaAsynchronously(from:_:)"
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

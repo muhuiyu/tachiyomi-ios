@@ -8,6 +8,11 @@
 import Foundation
 
 class ConfigurableSource: SourceProtocol {
+    var source: Source
+    
+    init(source: Source) {
+        self.source = source
+    }
     
     // MARK: - Basic information
     var language: Language {
