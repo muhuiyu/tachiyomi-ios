@@ -18,7 +18,8 @@ class SourceRegistry {
         ComicGardo.id: ComicGardo(),
         MagComi.id: MagComi(),
         SundayWebEvery.id: SundayWebEvery(),
-        CorocoroOnline.id: CorocoroOnline()
+        CorocoroOnline.id: CorocoroOnline(),
+        VizShonenJump.id: VizShonenJump()
         
     ]
     static func getProvider(for sourceID: String) -> SourceProtocol? {

@@ -17,6 +17,7 @@ protocol SourceProtocol {
     var isDateInReversed: Bool { get }
     
     func getPopularManga(at page: Int) async -> MangaPage
+//    func getLatestManga(at page: Int) async -> MangaPage
     func getManga(from urlString: String) async -> SourceManga?
     func searchMangas(for query: String, at page: Int) async -> MangaPage
     func getChapterPages(from chapter: SourceChapter) async -> Result<[ChapterPage], Error>
@@ -28,4 +29,5 @@ enum SourceError: Error {
     case noPageFound
     case generic
     case contentNotAvailable
+    case countryNotSupported
 }

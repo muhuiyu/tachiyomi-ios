@@ -8,7 +8,7 @@
 import UIKit
 import SwiftSoup
 
-class StandardHTTPSource: ParseHTTPSource {
+class StandardHTTPSource: ParsedHTTPSource {
     var mangaDetailsInfoSelector: ParseHTTPSelector? {
         return ParseHTTPSelector(main: "section.series-information div.series-header",
                                  link: nil,
@@ -18,7 +18,7 @@ class StandardHTTPSource: ParseHTTPSource {
                                  author: "h2.series-header-author",
                                  description: "p.series-header-description")
     }
-    var chapterListSelector: ParseHTTPSelector? {
+    override var chapterListSelector: ParseHTTPSelector? {
         return ParseHTTPSelector(main: "li.episode", link: nil, title: nil, image: nil, nextPage: nil)
     }
     
@@ -41,14 +41,14 @@ class StandardHTTPSource: ParseHTTPSource {
     }
     
     override func getPopularMangaRequest(at page: Int) -> URL? {
-        return ParseHTTPSource.initURL(from: baseURL + "/series", headers: [
+        return ParsedHTTPSource.initURL(from: baseURL + "/series", headers: [
             "Origin": baseURL,
             "Referer": baseURL
         ])
     }
     
     override func getSearchMangaRequest(for query: String, at page: Int) -> URL? {
-        return ParseHTTPSource.initURL(from: baseURL + "/search", headers: [ "q": query ])
+        return ParsedHTTPSource.initURL(from: baseURL + "/search", headers: [ "q": query ])
     }
     
     override func parseSearchedManga(from element: Element) -> SourceManga? {
@@ -86,13 +86,22 @@ class StandardHTTPSource: ParseHTTPSource {
                                            thumbnailURL: try infoElement.select(thumbnailSelector[0]).attr(thumbnailSelector[1]),
                                            sourceID: sourceID)
             
-            if let readableProductList = try doc.select("div.js-readable-product-list").first() {
-                let chapters = await parseChapters(from: readableProductList, urlString)
-                updatedManga.chapters = isDateInReversed ? chapters.reversed() : chapters
-            }
+            updatedManga.chapters = await getChapterList(from: doc, urlString)
             return updatedManga
         } catch {
             return nil
+        }
+    }
+    
+    override func getChapterList(from element: Element, _ urlString: String) async -> [SourceChapter] {
+        do {
+            if let readableProductList = try element.select("div.js-readable-product-list").first() {
+                let chapters = await parseChapters(from: readableProductList, urlString)
+                return isDateInReversed ? chapters.reversed() : chapters
+            }
+            return []
+        } catch {
+            return []
         }
     }
     
@@ -194,7 +203,7 @@ class StandardHTTPSource: ParseHTTPSource {
                     print(element.element)
                     let width: Int = element.element.width ?? 822
                     let height: Int = element.element.height ?? 1200
-                    let imageURL = ParseHTTPSource.initURL(from: element.element.src ?? "", headers: [
+                    let imageURL = ParsedHTTPSource.initURL(from: element.element.src ?? "", headers: [
                         "width": String(width),
                         "height": String(height),
                     ])?.absoluteString

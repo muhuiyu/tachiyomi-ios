@@ -66,7 +66,8 @@ extension ReaderPageViewController {
         }
     }
     private func reconfigureImage() {
-        guard let imageURLString = readerViewModel.getImageURL(at: pageIndex) else { return }
+        guard let page = readerViewModel.getPage(at: pageIndex), let imageURLString = page.imageURL else { return }
+        
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
             
@@ -74,10 +75,7 @@ extension ReaderPageViewController {
             // TODO: - Change to proper prefix
             if imageURLString.starts(with: "https://cdn") {
                 self.imageView.image = placeholder
-                guard
-                    let width = readerViewModel.getImageWidth(at: pageIndex),
-                    let height = readerViewModel.getImageHeight(at: pageIndex)
-                else { return }
+                guard let width = page.width, let height = page.height else { return }
                 Task {
                     if let image = await self.downloadImage(from: imageURLString) {
                         DispatchQueue.main.async { [weak self] in
@@ -87,7 +85,12 @@ extension ReaderPageViewController {
                 }
                 
             } else {
-                self.imageView.kf.setImage(with: URL(string: imageURLString), placeholder: placeholder)
+                if let modifer = page.modifier {
+                    // TODO: - 403...
+                    self.imageView.kf.setImage(with: URL(string: imageURLString), placeholder: placeholder, options: [.requestModifier(modifer)])
+                } else {
+                    self.imageView.kf.setImage(with: URL(string: imageURLString), placeholder: placeholder)
+                }
             }
         }
     }

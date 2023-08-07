@@ -8,7 +8,7 @@
 import UIKit
 import SwiftSoup
 
-class SenManga: ParseHTTPSource {
+class SenManga: ParsedHTTPSource {
     static let id = "senManga"
     override var sourceID: String { return SenManga.id }
     override var language: Language { return .ja }
@@ -34,6 +34,10 @@ class SenManga: ParseHTTPSource {
                                  nextPage: "ul.pagination a[rel=next]")
     }
     
+    override var chapterListSelector: ParseHTTPSelector? {
+        return ParseHTTPSelector(main: "ul.chapter-list")
+    }
+    
     // MARK: - getPopularManga
     override internal func getPopularMangaRequest(at page: Int) -> URL? {
         var urlComponents = URLComponents(string: baseURL)
@@ -47,7 +51,7 @@ class SenManga: ParseHTTPSource {
             guard let url = URL(string: urlString) else { return nil }
             let title = try element.select("h4.text-truncate").text()
             let thumbnailURLString = try element.select(".cover img").attr("src")
-            print("parsed", title, urlString)
+            print("parsed", title, urlString, thumbnailURLString)
             guard !title.isEmpty && !thumbnailURLString.isEmpty && thumbnailURLString != defaultImageURL else { return nil }
             return SourceManga(url: url.absoluteString, title: title, thumbnailURL: thumbnailURLString, sourceID: sourceID)
         } catch {
@@ -110,21 +114,31 @@ class SenManga: ParseHTTPSource {
                     break
                 }
             }
-            
-            let chapters = try doc.select("ul.chapter-list").select("li")
-                .map { chapter in
-                    let url = try chapter.select("a").first?.attr("href") ?? ""
-                    let name = try chapter.select("a").first?.text() ?? ""
-                    let time = try chapter.select("time[datetime]").text()
-                    
-                    let numberRegex = Regex(/\d+(\.\d+)?/)
-                    let chapterNumber = name.firstMatch(of: numberRegex)?.0 ?? "1"
-                    return SourceChapter(url: url, name: name, uploadedDate: time, chapterNumber: String(chapterNumber), mangaURL: urlString)
-                }
-            updatedManga.chapters = isDateInReversed ? chapters.reversed() : chapters
+            updatedManga.chapters = await getChapterList(from: doc, urlString)
             return updatedManga
         } catch {
             return nil
+        }
+    }
+    
+    override func getChapterList(from element: Element, _ urlString: String) async -> [SourceChapter] {
+        do {
+            if let chapterListSelector = chapterListSelector?.main {
+                let chapters = try element.select(chapterListSelector).select("li")
+                    .map { chapter in
+                        let url = try chapter.select("a").first?.attr("href") ?? ""
+                        let name = try chapter.select("a").first?.text() ?? ""
+                        let time = try chapter.select("time[datetime]").text()
+                        
+                        let numberRegex = Regex(/\d+(\.\d+)?/)
+                        let chapterNumber = name.firstMatch(of: numberRegex)?.0 ?? "1"
+                        return SourceChapter(url: url, name: name, uploadedDate: time, chapterNumber: String(chapterNumber), mangaURL: urlString)
+                    }
+                return isDateInReversed ? chapters.reversed() : chapters
+            }
+            return []
+        } catch {
+            return []
         }
     }
 

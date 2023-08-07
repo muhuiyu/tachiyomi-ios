@@ -1,5 +1,5 @@
 //
-//  ParseHTTPSource.swift
+//  ParsedHTTPSource.swift
 //  tachiyomi
 //
 //  Created by Grace, Mu-Hui Yu on 8/3/23.
@@ -13,7 +13,7 @@ struct MangaPage {
     let hasNextPage: Bool
 }
 
-class ParseHTTPSource: SourceProtocol {
+class ParsedHTTPSource: SourceProtocol {
     
     // MARK: - Basic information
     var sourceID: String {
@@ -51,9 +51,9 @@ class ParseHTTPSource: SourceProtocol {
         }
             
         do {
-            let (data, _) = try await URLSession.shared.data(from: url)
+            let (data, response) = try await URLSession.shared.data(from: url)
             if let contents = String(data: data, encoding: .utf8) {
-                return parsePopularMangas(from: contents)
+                return parsePopularMangas(from: contents, response)
             } else {
                 return MangaPage(mangas: [], hasNextPage: false)
             }
@@ -112,12 +112,16 @@ class ParseHTTPSource: SourceProtocol {
     var mangaSearchResultSelector: ParseHTTPSelector {
         fatalError("Not implemented")
     }
+    
+    var chapterListSelector: ParseHTTPSelector? {
+        return nil
+    }
 
     func getPopularMangaRequest(at page: Int) -> URL? {
         fatalError("Not implemented")
     }
     
-    func parsePopularMangas(from html: String) -> MangaPage {
+    func parsePopularMangas(from html: String, _ response: URLResponse) -> MangaPage {
         do {
             let doc = try SwiftSoup.parse(html)
             let mangaElements = try doc.select(popularMangaSelector.main)
@@ -172,6 +176,10 @@ class ParseHTTPSource: SourceProtocol {
         fatalError("Not implemented")
     }
     
+    func getChapterList(from element: Element, _ urlString: String) async -> [SourceChapter] {
+        fatalError("Not implemented")
+    }
+    
     func getChapterPages(from urlString: String) async -> Result<[ChapterPage], Error> {
         guard let url = URL(string: urlString) else { return .failure(SourceError.noPageFound) }
         
@@ -196,7 +204,7 @@ class ParseHTTPSource: SourceProtocol {
     }
 }
 
-extension ParseHTTPSource {
+extension ParsedHTTPSource {
     static func initURL(from urlString: String, headers: [String: String]) -> URL? {
         guard
             let url = URL(string: urlString),

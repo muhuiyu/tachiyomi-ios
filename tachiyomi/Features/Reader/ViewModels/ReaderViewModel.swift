@@ -116,18 +116,9 @@ extension ReaderViewModel {
         }
         return ReaderPageViewController(readerViewModel: self, pageIndex: pageIndex)
     }
-    /// For ReaderPageViewController to fetch imageView
-    func getImageURL(at pageIndex: Int) -> String? {
-        if pageIndex >= numberOfPages { return nil }
-        return pages.value[pageIndex].imageURL
-    }
-    func getImageWidth(at pageIndex: Int) -> CGFloat? {
-        if pageIndex >= numberOfPages { return nil }
-        return pages.value[pageIndex].width
-    }
-    func getImageHeight(at pageIndex: Int) -> CGFloat? {
-        if pageIndex >= numberOfPages { return nil }
-        return pages.value[pageIndex].height
+    func getPage(at pageIndex: Int) -> ChapterPage? {
+        guard pageIndex < numberOfPages else { return nil }
+        return pages.value[pageIndex]
     }
 }
 

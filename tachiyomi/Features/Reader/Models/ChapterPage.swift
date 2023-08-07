@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Kingfisher
 
 struct ChapterPage {
     let pageURL: String?
@@ -13,12 +14,14 @@ struct ChapterPage {
     let imageURL: String?
     let width: CGFloat?
     let height: CGFloat?
+    let modifier: AnyModifier?
     
-    init(pageURL: String? = nil, pageNumber: Int, imageURL: String? = nil, width: CGFloat? = nil, height: CGFloat? = nil) {
+    init(pageURL: String? = nil, pageNumber: Int, imageURL: String? = nil, width: CGFloat? = nil, height: CGFloat? = nil, modifier: AnyModifier? = nil) {
         self.pageURL = pageURL
         self.pageNumber = pageNumber
         self.imageURL = imageURL
         self.width = width
         self.height = height
+        self.modifier = modifier
     }
 }
