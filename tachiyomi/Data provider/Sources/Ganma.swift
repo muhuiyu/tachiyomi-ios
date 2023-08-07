@@ -9,7 +9,14 @@ import UIKit
 import SwiftSoup
 
 class Ganma: ConfigurableSource {
-    static let shared = Ganma(source: .ganma)
+    static let id = "ganma"
+    
+    override var sourceID: String { return Ganma.id }
+    override var language: Language { return .ja }
+    override var supportsLatest: Bool { return true }
+    override var name: String { return "ガンマ" }
+    override var logo: String { return "ganma-logo" }
+    override var baseURL: String { return "https://ganma.jp" }
     
     override func getPopularManga(at page: Int) async -> MangaPage {
         guard let request = getPopularMangaRequest(at: page) else {
@@ -44,15 +51,11 @@ class Ganma: ConfigurableSource {
     override func parsePopularManga(from data: Data) -> [SourceManga] {
         do {
             let base = try JSONDecoder().decode(GanmaPopularMangasData.self, from: data)
-            return base.root.compactMap({ SourceManga(from: $0) })
+            return base.root.compactMap({ SourceManga(from: $0, url: getMangaURL(for: $0.alias)) })
         } catch {
             print("Error in parsePopularManga: \(error.localizedDescription)")
             return []
         }
-    }
-    
-    func getMangaURL(for alias: String) -> String {
-        return "\(baseURL)/api/1.0/magazines/web/\(alias)"
     }
     
     override func getMangaRequest(for urlString: String) -> URLRequest? {
@@ -65,20 +68,33 @@ class Ganma: ConfigurableSource {
     override func parseManga(from data: Data) -> SourceManga? {
         do {
             let base = try JSONDecoder().decode(GanmaMangaDetailsData.self, from: data)
-            return SourceManga(from: base.root)
+            return SourceManga(from: base.root, url: getMangaURL(for: base.root.alias))
         } catch {
             print("Error in parseManga: \(error.localizedDescription)")
             return nil
         }
     }
     
-    // MARK: - Get chapter pages
-    func getChapterPages(from chapter: GanmaMagazinePage) -> [ChapterPage] {
-        return chapter.files
+    override func getChapterPages(from chapter: SourceChapter) async -> Result<[ChapterPage], Error> {
+        guard let page = chapter.ganmaPage else { return .failure(SourceError.noPageFound)}
+        let pages = page.files
             .enumerated()
-            .map({ ChapterPage(pageNumber: $0.offset, imageURL: "\(chapter.baseURL)\($0.element)?\(chapter.token)") })
+            .map({ ChapterPage(pageNumber: $0.offset, imageURL: "\(page.baseURL)\($0.element)?\(page.token)") })
+        return .success(pages)
+    }
+    
+    override func refetchChapterPage(from pageURL: String, at pageNumber: Int) async -> ChapterPage? {
+        return nil
     }
 }
+
+// MARK: - Private Methods
+extension Ganma {
+    private func getMangaURL(for alias: String) -> String {
+        return "\(baseURL)/api/1.0/magazines/web/\(alias)"
+    }
+}
+
 
 // MARK: - Data models
 struct GanmaPopularMangasData: Codable {
@@ -251,4 +267,38 @@ struct GanmaMagazineNewestStoryInformation: Codable {
     let author: GanmaAuthor
     let title: String
     let subTitle: String?
+}
+
+// MARK: - Ganma data decoder
+extension SourceManga {
+    init(from ganmaData: GanmaMangaOverviewRoot, url: String) {
+        self.url = url
+        self.title = ganmaData.title
+        self.alias = ganmaData.alias
+        self.artist = nil
+        self.author = ganmaData.author.penName
+        self.description = ganmaData.overview
+        self.genres = []
+        self.status = .unknown
+        self.thumbnailURL = ganmaData.squareImage.url
+        self.updateStrategy = nil
+        self.isInitialized = nil
+        self.chapters = []
+        self.sourceID = Ganma.id
+    }
+    init(from magazine: GanmaMagazine, url: String) {
+        let mangaURL = url
+        self.url = mangaURL
+        self.title = magazine.title
+        self.alias = magazine.alias
+        self.author = magazine.author.penName
+        self.description = magazine.description
+        self.genres = []
+        self.status = magazine.flags.isFinished ?? false ? .completed : .ongoing
+        self.thumbnailURL = magazine.squareImage.url
+        self.updateStrategy = nil
+        self.isInitialized = true
+        self.chapters = magazine.items.enumerated().map({ $0.element.toChapter(at: $0.offset, for: mangaURL) })
+        self.sourceID = Ganma.id
+    }
 }

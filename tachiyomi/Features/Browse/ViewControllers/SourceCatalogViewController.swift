@@ -15,8 +15,9 @@ class SourceCatalogViewController: Base.MVVMViewController<SourceViewModel> {
     private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: layoutFlow)
     private let spinner = UIActivityIndicatorView(style: .large)
     
-    init(appCoordinator: AppCoordinator? = nil, viewModel: SourceViewModel, source: Source) {
-        self.segmentControl = UISegmentedControl(items: source.filters.map({ $0.name }))
+    init(appCoordinator: AppCoordinator? = nil, viewModel: SourceViewModel, sourceID: String) {
+        // TODO: - update segment control based on sources
+        self.segmentControl = UISegmentedControl(items: ["Popular", "Latest"])
         super.init(appCoordinator: appCoordinator, viewModel: viewModel)
     }
     
@@ -77,7 +78,7 @@ extension SourceCatalogViewController {
         }
     }
     private func configureNavigationBar() {
-        title = viewModel.source.name
+        title = viewModel.getSourceName()
         
         // filter, more
         let viewBarItem = UIBarButtonItem(image: UIImage(systemName: Icons.squareGrid2x2),
@@ -144,7 +145,7 @@ extension SourceCatalogViewController: UICollectionViewDataSource, UICollectionV
         defer {
             collectionView.deselectItem(at: indexPath, animated: true)
         }
-        let mangaViewModel = MangaViewModel(appCoordinator: self.appCoordinator, source: viewModel.source)
+        let mangaViewModel = MangaViewModel(appCoordinator: self.appCoordinator, sourceID: viewModel.sourceID)
         mangaViewModel.manga.accept(viewModel.sourceMangas.value[indexPath.row])
         let viewController = MangaDetailsViewController(appCoordinator: self.appCoordinator,
                                                         viewModel: mangaViewModel)

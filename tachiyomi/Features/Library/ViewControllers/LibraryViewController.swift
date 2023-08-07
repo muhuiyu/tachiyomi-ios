@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SkeletonView
 
 class LibraryViewController: Base.MVVMViewController<LibraryViewModel> {
     // MARK: - Views
@@ -101,11 +102,17 @@ extension LibraryViewController {
 // MARK: - CollectionView dataSource and delegate
 extension LibraryViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return viewModel.filteredMangas.value.count
+        return viewModel.isLoading.value ? viewModel.getNumberOfLibraryMangas() : viewModel.filteredMangas.value.count
     }
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MangaPreviewCell.reuseID, for: indexPath) as? MangaPreviewCell else { return UICollectionViewCell() }
-        cell.manga = viewModel.filteredMangas.value[indexPath.row]
+        cell.isSkeletonable = true
+        if viewModel.isLoading.value {
+            cell.showSkeleton(animated: true, delay: 0.5)
+        } else {
+            cell.hideSkeleton()
+            cell.manga = viewModel.filteredMangas.value[indexPath.row]
+        }
         return cell
     }
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -113,7 +120,7 @@ extension LibraryViewController: UICollectionViewDataSource, UICollectionViewDel
             collectionView.deselectItem(at: indexPath, animated: true)
         }
         let manga = viewModel.filteredMangas.value[indexPath.row]
-        let mangaViewModel = MangaViewModel(appCoordinator: self.appCoordinator, source: manga.source)
+        let mangaViewModel = MangaViewModel(appCoordinator: self.appCoordinator, sourceID: manga.sourceID)
         mangaViewModel.manga.accept(manga)
         let viewController = MangaDetailsViewController(appCoordinator: self.appCoordinator,
                                                         viewModel: mangaViewModel)
@@ -168,5 +175,11 @@ extension LibraryViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         guard let query = searchController.searchBar.text else { return }
         viewModel.filterManga(with: query)
+    }
+}
+
+extension LibraryViewController: SkeletonCollectionViewDataSource {
+    func collectionSkeletonView(_ skeletonView: UICollectionView, cellIdentifierForItemAt indexPath: IndexPath) -> SkeletonView.ReusableCellIdentifier {
+        return MangaPreviewCell.reuseID
     }
 }

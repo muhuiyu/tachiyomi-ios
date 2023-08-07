@@ -10,7 +10,7 @@ import RxSwift
 import RxRelay
 
 class SourceViewModel: Base.ViewModel {
-    let source: Source
+    let sourceID: String
     let sourceMangas: BehaviorRelay<[SourceManga]> = BehaviorRelay(value: [])
     let isLoading = BehaviorRelay(value: true)
     
@@ -18,14 +18,17 @@ class SourceViewModel: Base.ViewModel {
     private(set) var hasNextPage = true
     private var currentPage = 0
     
-    init(appCoordinator: AppCoordinator? = nil, source: Source) {
-        self.source = source
+    init(appCoordinator: AppCoordinator? = nil, sourceID: String) {
+        self.sourceID = sourceID
         super.init(appCoordinator: appCoordinator)
         fetchNextPage()
     }
 }
 
 extension SourceViewModel {
+    func getSourceName() -> String {
+        return SourceRegistry.getProvider(for: sourceID)?.name ?? ""
+    }
     func fetchNextPage() {
         if !hasNextPage { return }
         currentPage += 1
@@ -53,30 +56,20 @@ extension SourceViewModel {
     }
     func addMangaToLibary(at indexPath: IndexPath) {
         guard let mangaURL = sourceMangas.value[indexPath.row].url else { return }
-        LocalStorage.shared.addToLibrary(for: mangaURL)
+        LocalStorage.shared.addToLibrary(for: mangaURL, from: sourceID)
     }
 }
 
 // MARK: - Private methods
 extension SourceViewModel {
     private func fetchData(for query: String) async -> MangaPage {
-        switch source {
-        case .senManga:
-            if query.isEmpty {
-                return await SenManga.shared.getPopularManga(at: currentPage)
-            } else {
-                return await SenManga.shared.searchMangas(for: query, at: currentPage)
-            }
-        case .ganma:
-            // haven't completed search function yet
-            return await Ganma.shared.getPopularManga(at: currentPage)
-        case .shonenJumpPlus:
-            // haven't completed search function yet
-            if let source = LocalStorage.shared.standardSources[.shonenJumpPlus] {
-                return await source.getPopularManga(at: currentPage)
-            } else {
-                return MangaPage(mangas: [], hasNextPage: false)
-            }
+        guard let provider = SourceRegistry.getProvider(for: sourceID) else {
+            return MangaPage(mangas: [], hasNextPage: false)
+        }
+        if query.isEmpty {
+            return await provider.getPopularManga(at: currentPage)
+        } else {
+            return await provider.searchMangas(for: query, at: currentPage)
         }
     }
 }

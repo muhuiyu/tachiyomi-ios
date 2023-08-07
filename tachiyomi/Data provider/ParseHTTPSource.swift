@@ -14,53 +14,31 @@ struct MangaPage {
 }
 
 class ParseHTTPSource: SourceProtocol {
-    var source: Source
-    
-    var shouldFetchChapterAsynchronously: Bool { return true }
-    
-    init(source: Source) {
-        self.source = source
-    }
     
     // MARK: - Basic information
+    var sourceID: String {
+        fatalError("Not implemented")
+    }
+    
     var language: Language {
-        return source.language
+        fatalError("Not implemented")
     }
     
     var supportsLatest: Bool {
-        return source.filters.contains(.latest)
+        fatalError("Not implemented")
     }
     
     var name: String {
-        return source.name
+        fatalError("Not implemented")
+    }
+    
+    var logo: String {
+        fatalError("Not implemented")
     }
     
     var baseURL: String {
-        return source.baseURL
+        fatalError("Not implemented")
     }
-    
-    var popularMangaSelector: String {
-        return "Should be implemented in subclass"
-    }
-    
-    var popularMangaNextPageSelector: String? { return nil }
-    
-    // TODO: - Add latest manga
-    var latestMangaSelector: String? {
-        return "Should be implemented in subclass"
-    }
-    
-    var mangaSearchResultSelector: String {
-        return "Should be implemented in subclass"
-    }
-    
-    var chapterListSelector: String? {
-        return "Should be implemented in subclass"
-    }
-    
-    var mangaSearchResultNextPageSelector: String? { return nil }
-    
-    var mangaDetailsInfoSelector: String? { return nil }
     
     // MARK: - Get popular manga
     func getPopularManga(at page: Int) async -> MangaPage {
@@ -81,30 +59,18 @@ class ParseHTTPSource: SourceProtocol {
         }
     }
     
-    internal func getPopularMangaRequest(at page: Int) -> URL? { return nil }
-    
-    internal func parsePopularMangas(from html: String) -> MangaPage {
+    // MARK: - Get manga from url
+    func getManga(from urlString: String) async -> SourceManga? {
+        guard let url = URL(string: urlString) else { return nil }
+        
         do {
-            let doc = try SwiftSoup.parse(html)
-            let mangaElements = try doc.select(popularMangaSelector)
-            let mangas = mangaElements.compactMap({ parsePopularManga(from: $0) })
-            
-            if let nextPageSelector = popularMangaNextPageSelector {
-                let nextPage = try doc.select(nextPageSelector)
-                return MangaPage(mangas: mangas, hasNextPage: !nextPage.isEmpty)
-            } else {
-                return MangaPage(mangas: mangas, hasNextPage: false)
-            }
-            
+            let (data, _) = try await URLSession.shared.data(from: url)
+            guard let contents = String(data: data, encoding: .utf8) else { return nil }
+            return await parseManga(from: contents, urlString)
         } catch {
             print("An error occurred: \(error)")
-            return MangaPage(mangas: [], hasNextPage: false)
+            return nil
         }
-    }
-    
-    internal func parsePopularManga(from element: Element) -> SourceManga? {
-        // Should be implemented in subclass
-        return nil
     }
     
     // MARK: - Search manga
@@ -125,12 +91,73 @@ class ParseHTTPSource: SourceProtocol {
         }
     }
     
-    internal func getSearchMangaRequest(for query: String, at page: Int) -> URL? {
-        // Should be implemented in subclass
-        return nil
+    // MARK: - Get chapter pages
+    func getChapterPages(from chapter: SourceChapter) async -> Result<[ChapterPage], Error> {
+        return await getChapterPages(from: chapter.url)
+    }
+
+    var popularMangaSelector: String {
+        fatalError("Not implemented")
     }
     
-    internal func parseMangaSearchResult(from html: String) -> MangaPage {
+    var popularMangaNextPageSelector: String? {
+        fatalError("Not implemented")
+    }
+    
+    // TODO: - Add latest manga
+    var latestMangaSelector: String? {
+        fatalError("Not implemented")
+    }
+    
+    var mangaSearchResultSelector: String {
+        fatalError("Not implemented")
+    }
+    
+    var chapterListSelector: String? {
+        fatalError("Not implemented")
+    }
+    
+    var mangaSearchResultNextPageSelector: String? {
+        fatalError("Not implemented")
+    }
+    
+    var mangaDetailsInfoSelector: String? {
+        fatalError("Not implemented")
+    }
+
+    func getPopularMangaRequest(at page: Int) -> URL? {
+        fatalError("Not implemented")
+    }
+    
+    func parsePopularMangas(from html: String) -> MangaPage {
+        do {
+            let doc = try SwiftSoup.parse(html)
+            let mangaElements = try doc.select(popularMangaSelector)
+            let mangas = mangaElements.compactMap({ parsePopularManga(from: $0) })
+            
+            if let nextPageSelector = popularMangaNextPageSelector {
+                let nextPage = try doc.select(nextPageSelector)
+                return MangaPage(mangas: mangas, hasNextPage: !nextPage.isEmpty)
+            } else {
+                return MangaPage(mangas: mangas, hasNextPage: false)
+            }
+            
+        } catch {
+            print("An error occurred: \(error)")
+            return MangaPage(mangas: [], hasNextPage: false)
+        }
+    }
+    
+    func parsePopularManga(from element: Element) -> SourceManga? {
+        fatalError("Not implemented")
+    }
+    
+    
+    func getSearchMangaRequest(for query: String, at page: Int) -> URL? {
+        fatalError("Not implemented")
+    }
+    
+    func parseMangaSearchResult(from html: String) -> MangaPage {
         do {
             let doc = try SwiftSoup.parse(html)
             let mangaElements = try doc.select(mangaSearchResultSelector)
@@ -149,50 +176,21 @@ class ParseHTTPSource: SourceProtocol {
         }
     }
     
-    internal func parseSearchedManga(from element: Element) -> SourceManga? {
-        // Should be implemented in subclass
-        return nil
+    func parseSearchedManga(from element: Element) -> SourceManga? {
+        fatalError("Not implemented")
     }
     
-    // MARK: - Get manga from url
-    func getManga(from urlString: String) async -> SourceManga? {
-        guard let url = URL(string: urlString) else {
-            return nil
-        }
-        do {
-            let (data, _) = try await URLSession.shared.data(from: url)
-            guard let contents = String(data: data, encoding: .utf8) else {
-                return nil
-            }
-            if shouldFetchChapterAsynchronously {
-                return await parseMangaAsynchronously(from: contents, urlString)
-            } else {
-                return parseManga(from: contents, urlString)
-            }
-        } catch {
-            print("An error occurred: \(error)")
-            return nil
-        }
+    func parseManga(from html: String, _ urlString: String) async -> SourceManga? {
+        fatalError("Not implemented")
     }
     
-    internal func parseManga(from html: String, _ urlString: String) -> SourceManga? {
-        // Should be implemented in subclass
-        return nil
-    }
-    
-    internal func parseMangaAsynchronously(from html: String, _ urlString: String) async -> SourceManga? {
-        // Should be implemented in subclass
-        return nil
-    }
-    
-    // MARK: - Get chapter pages
     func getChapterPages(from urlString: String) async -> Result<[ChapterPage], Error> {
-        guard let url = URL(string: urlString) else { return .failure(ParseHTTPSourceError.noPageFound) }
+        guard let url = URL(string: urlString) else { return .failure(SourceError.noPageFound) }
         
         do {
             let (data, _) = try await URLSession.shared.data(from: url)
             guard let contents = String(data: data, encoding: .utf8) else {
-                return .failure(ParseHTTPSourceError.noPageFound)
+                return .failure(SourceError.noPageFound)
             }
             return await parseChapterPages(from: contents, chapterURL: urlString)
         } catch {
@@ -201,15 +199,25 @@ class ParseHTTPSource: SourceProtocol {
         }
     }
     
-    internal func parseChapterPages(from html: String, chapterURL: String) async -> Result<[ChapterPage], Error> {
-        // Should be implemented in subclass
-        return .failure(ParseHTTPSourceError.noPageFound)
+    func parseChapterPages(from html: String, chapterURL: String) async -> Result<[ChapterPage], Error> {
+        fatalError("Not implemented")
+    }
+    
+    func refetchChapterPage(from pageURL: String, at pageNumber: Int) async -> ChapterPage? {
+        return nil
     }
 }
 
-
-// MARK: - ParseHTTPSourceError
-enum ParseHTTPSourceError: Error {
-    case noPageFound
-    case generic
+extension ParseHTTPSource {
+    static func initURL(from urlString: String, headers: [String: String]) -> URL? {
+        guard
+            let url = URL(string: urlString),
+            var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: true)
+        else { return nil }
+        
+        headers.forEach { (key, value) in
+            urlComponents.queryItems?.append(URLQueryItem(name: key, value: value))
+        }
+        return urlComponents.url
+    }
 }

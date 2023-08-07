@@ -10,11 +10,6 @@ import UIKit
 class LocalStorage {
     static let shared: LocalStorage = LocalStorage()
     
-    // Sources
-    private(set) var standardSources: [Source: StandardHTTPSource] = [
-        .shonenJumpPlus: StandardHTTPSource(source: .shonenJumpPlus)
-    ]
-    
     // keys
     static var libraryMangaURLsKey: String { "k_library_manga_urls" }
     
@@ -29,41 +24,52 @@ class LocalStorage {
 
 // MARK: - Library
 extension LocalStorage {
+    private struct LibraryManga: Codable {
+        let sourceID: String
+        let mangaURL: String
+    }
+    private func getSavedMangas() -> [LibraryManga] {
+        guard let data = UserDefaults.standard.data(forKey: LocalStorage.libraryMangaURLsKey),
+              let entries = try? JSONDecoder().decode([LibraryManga].self, from: data) else { return [] }
+        return entries
+    }
+    func getNumberOfLibraryMangas() -> Int {
+        return getSavedMangas().count
+    }
     func getLibraryMangas() async -> [SourceManga] {
-        if let mangaURLs = UserDefaults.standard.object(forKey: LocalStorage.libraryMangaURLsKey) as? [String] {
+        var mangas = [SourceManga]()
+        for entry in getSavedMangas() {
             // fetch mangas
-            var mangas = [SourceManga]()
-            for mangaURL in mangaURLs {
-                if mangaURL.contains(SenManga.shared.baseURL) {
-                    if let manga = await SenManga.shared.getManga(from: mangaURL) {
-                        mangas.append(manga)
-                    }
-                } else if mangaURL.contains(Ganma.shared.baseURL) {
-                    if let manga = await Ganma.shared.getManga(from: mangaURL) {
-                        mangas.append(manga)
-                    }
+            if let provider = SourceRegistry.getProvider(for: entry.sourceID) {
+                if let manga = await provider.getManga(from: entry.mangaURL) {
+                    mangas.append(manga)
                 }
             }
-            return mangas
         }
-        return []
+        return mangas
     }
     func libraryContains(_ mangaURL: String) -> Bool {
-        if let mangaURLs = UserDefaults.standard.object(forKey: LocalStorage.libraryMangaURLsKey) as? [String] {
-            return mangaURLs.contains(mangaURL)
-        }
-        return false
+        return getSavedMangas().contains(where: { $0.mangaURL == mangaURL })
     }
     func setLibraryMangas(to mangaURLs: [String]) {
         UserDefaults.standard.setValue(mangaURLs, forKey: LocalStorage.libraryMangaURLsKey)
     }
-    func addToLibrary(for mangaURL: String) {
-        var mangaURLs = [String]()
-        if let libraryMangaURLs = UserDefaults.standard.object(forKey: LocalStorage.libraryMangaURLsKey) as? [String] {
-            mangaURLs += libraryMangaURLs
+    func deleteMangaFromLibrary(for mangaURL: String) {
+        var savedMangas = getSavedMangas()
+        if !savedMangas.isEmpty {
+            savedMangas.removeAll(where: { $0.mangaURL == mangaURL })
+            if let encoded = try? JSONEncoder().encode(savedMangas) {
+                UserDefaults.standard.setValue(encoded, forKey: LocalStorage.libraryMangaURLsKey)
+            }
         }
-        mangaURLs.append(mangaURL)
-        UserDefaults.standard.set(mangaURLs, forKey: LocalStorage.libraryMangaURLsKey)
+    }
+    func addToLibrary(for mangaURL: String, from sourceID: String) {
+        var mangas = getSavedMangas()
+        mangas.append(LibraryManga(sourceID: sourceID, mangaURL: mangaURL))
+        
+        if let encoded = try? JSONEncoder().encode(mangas) {
+            UserDefaults.standard.set(encoded, forKey: LocalStorage.libraryMangaURLsKey)
+        }
     }
 }
 

@@ -250,7 +250,7 @@
 //        self.updateStrategy = nil
 //        self.isInitialized = true
 //        self.chapters = []
-//        self.source = .booklive
+//        self.sourceID = .booklive
 //    }
 //    init(from data: BookliveMangaDetailsTitleList) {
 //        self.url = data.getURL()

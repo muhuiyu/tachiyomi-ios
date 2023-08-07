@@ -40,9 +40,12 @@ extension MangaDetailsViewController {
     }
     private func didTapStart(from chapterIndex: Int) {
         guard let chapters = viewModel.manga.value?.chapters else { return }
-        let readerViewModel  = ReaderViewModel(appCoordinator: self.appCoordinator, chapters: chapters, source: viewModel.source)
+        let readerViewModel = ReaderViewModel(appCoordinator: self.appCoordinator,
+                                              chapters: chapters,
+                                              sourceID: viewModel.sourceID)
         readerViewModel.chapterIndex.accept(chapterIndex)
-        let navigationController = ReaderViewController(appCoordinator: self.appCoordinator, viewModel: readerViewModel).embedInNavgationController()
+        let navigationController = ReaderViewController(appCoordinator: self.appCoordinator,
+                                                        viewModel: readerViewModel).embedInNavgationController()
         navigationController.isModalInPresentation = true
         navigationController.modalPresentationStyle = .fullScreen
         present(navigationController, animated: true)

@@ -57,7 +57,6 @@
 		E46B12B42A7C530F003E4C1D /* SourceViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E46B12B32A7C530F003E4C1D /* SourceViewModel.swift */; };
 		E46B12B62A7C534B003E4C1D /* MangaViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E46B12B52A7C534B003E4C1D /* MangaViewModel.swift */; };
 		E46B12B82A7C5391003E4C1D /* MangaDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E46B12B72A7C5391003E4C1D /* MangaDetailsViewController.swift */; };
-		E46B12BB2A7C559E003E4C1D /* Source.swift in Sources */ = {isa = PBXBuildFile; fileRef = E46B12BA2A7C559E003E4C1D /* Source.swift */; };
 		E46B12BD2A7C55FB003E4C1D /* SourceManga.swift in Sources */ = {isa = PBXBuildFile; fileRef = E46B12BC2A7C55FA003E4C1D /* SourceManga.swift */; };
 		E46B12BF2A7C56E4003E4C1D /* UpdateStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E46B12BE2A7C56E4003E4C1D /* UpdateStrategy.swift */; };
 		E46B12C32A7C5FC4003E4C1D /* ParseHTTPSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = E46B12C22A7C5FC4003E4C1D /* ParseHTTPSource.swift */; };
@@ -81,6 +80,9 @@
 		E4C27C632A7F2DCE00372B8D /* Booklife.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4C27C622A7F2DCE00372B8D /* Booklife.swift */; };
 		E4C27C692A7F844000372B8D /* ReaderEndPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4C27C682A7F844000372B8D /* ReaderEndPageViewController.swift */; };
 		E4D1C0A12A802FDF00BFF1A4 /* StandardHTTPSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4D1C0A02A802FDF00BFF1A4 /* StandardHTTPSource.swift */; };
+		E4D1C0A32A806C4200BFF1A4 /* SourceRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4D1C0A22A806C4200BFF1A4 /* SourceRegistry.swift */; };
+		E4D1C0A52A806E5500BFF1A4 /* ShonenJumpPlus.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4D1C0A42A806E5500BFF1A4 /* ShonenJumpPlus.swift */; };
+		E4D1C0A82A8081CC00BFF1A4 /* SkeletonView in Frameworks */ = {isa = PBXBuildFile; productRef = E4D1C0A72A8081CC00BFF1A4 /* SkeletonView */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -132,7 +134,6 @@
 		E46B12B32A7C530F003E4C1D /* SourceViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceViewModel.swift; sourceTree = "<group>"; };
 		E46B12B52A7C534B003E4C1D /* MangaViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MangaViewModel.swift; sourceTree = "<group>"; };
 		E46B12B72A7C5391003E4C1D /* MangaDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MangaDetailsViewController.swift; sourceTree = "<group>"; };
-		E46B12BA2A7C559E003E4C1D /* Source.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Source.swift; sourceTree = "<group>"; };
 		E46B12BC2A7C55FA003E4C1D /* SourceManga.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceManga.swift; sourceTree = "<group>"; };
 		E46B12BE2A7C56E4003E4C1D /* UpdateStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateStrategy.swift; sourceTree = "<group>"; };
 		E46B12C22A7C5FC4003E4C1D /* ParseHTTPSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParseHTTPSource.swift; sourceTree = "<group>"; };
@@ -154,6 +155,8 @@
 		E4C27C622A7F2DCE00372B8D /* Booklife.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Booklife.swift; sourceTree = "<group>"; };
 		E4C27C682A7F844000372B8D /* ReaderEndPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReaderEndPageViewController.swift; sourceTree = "<group>"; };
 		E4D1C0A02A802FDF00BFF1A4 /* StandardHTTPSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StandardHTTPSource.swift; sourceTree = "<group>"; };
+		E4D1C0A22A806C4200BFF1A4 /* SourceRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceRegistry.swift; sourceTree = "<group>"; };
+		E4D1C0A42A806E5500BFF1A4 /* ShonenJumpPlus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShonenJumpPlus.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -162,6 +165,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E46B12D12A7C7D10003E4C1D /* Kingfisher in Frameworks */,
+				E4D1C0A82A8081CC00BFF1A4 /* SkeletonView in Frameworks */,
 				E46B12782A7C40E7003E4C1D /* RxSwift in Frameworks */,
 				E46B127B2A7C40FE003E4C1D /* SnapKit in Frameworks */,
 				E46B12762A7C40E7003E4C1D /* RxRelay in Frameworks */,
@@ -308,6 +312,7 @@
 				E4D1C0A02A802FDF00BFF1A4 /* StandardHTTPSource.swift */,
 				E4C27C5E2A7E984700372B8D /* ConfigurableSource.swift */,
 				E46B12C82A7C6288003E4C1D /* SourceProtocol.swift */,
+				E4D1C0A22A806C4200BFF1A4 /* SourceRegistry.swift */,
 			);
 			path = "Data provider";
 			sourceTree = "<group>";
@@ -477,7 +482,6 @@
 		E46B12B92A7C5595003E4C1D /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				E46B12BA2A7C559E003E4C1D /* Source.swift */,
 				E46B12BE2A7C56E4003E4C1D /* UpdateStrategy.swift */,
 				E46B12C42A7C61A9003E4C1D /* MangasPage.swift */,
 			);
@@ -589,6 +593,7 @@
 				E46B12C62A7C625A003E4C1D /* SenManga.swift */,
 				E4C27C5C2A7E2F1F00372B8D /* Ganma.swift */,
 				E4C27C622A7F2DCE00372B8D /* Booklife.swift */,
+				E4D1C0A42A806E5500BFF1A4 /* ShonenJumpPlus.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -616,6 +621,7 @@
 				E46B127A2A7C40FE003E4C1D /* SnapKit */,
 				E46B12CD2A7C6C3F003E4C1D /* SwiftSoup */,
 				E46B12D02A7C7D10003E4C1D /* Kingfisher */,
+				E4D1C0A72A8081CC00BFF1A4 /* SkeletonView */,
 			);
 			productName = tachiyomi;
 			productReference = E44E2AE22A7C390000669192 /* tachiyomi.app */;
@@ -650,6 +656,7 @@
 				E46B12792A7C40FE003E4C1D /* XCRemoteSwiftPackageReference "SnapKit" */,
 				E46B12CC2A7C6C3F003E4C1D /* XCRemoteSwiftPackageReference "SwiftSoup" */,
 				E46B12CF2A7C7D10003E4C1D /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				E4D1C0A62A8081CC00BFF1A4 /* XCRemoteSwiftPackageReference "SkeletonView" */,
 			);
 			productRefGroup = E44E2AE32A7C390000669192 /* Products */;
 			projectDirPath = "";
@@ -678,6 +685,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E44E2B062A7C396500669192 /* AppCoordinator.swift in Sources */,
+				E4D1C0A32A806C4200BFF1A4 /* SourceRegistry.swift in Sources */,
 				E46B12872A7C423D003E4C1D /* MainTabBarController.swift in Sources */,
 				E46B12B62A7C534B003E4C1D /* MangaViewModel.swift in Sources */,
 				E44E2B542A7C396900669192 /* Icons.swift in Sources */,
@@ -694,7 +702,6 @@
 				E4D1C0A12A802FDF00BFF1A4 /* StandardHTTPSource.swift in Sources */,
 				E46B12B02A7C4F60003E4C1D /* MangaPreviewCell.swift in Sources */,
 				E44E2B422A7C396900669192 /* IconButton.swift in Sources */,
-				E46B12BB2A7C559E003E4C1D /* Source.swift in Sources */,
 				E46B129C2A7C49D6003E4C1D /* UpdatesViewController.swift in Sources */,
 				E46B12AB2A7C4B38003E4C1D /* HistoryViewModel.swift in Sources */,
 				E46B129E2A7C4A16003E4C1D /* Base.swift in Sources */,
@@ -706,6 +713,7 @@
 				E46B12A12A7C4ADA003E4C1D /* LibraryViewModel.swift in Sources */,
 				E44E2B102A7C396500669192 /* Coordinator.swift in Sources */,
 				E46B12982A7C49AC003E4C1D /* BrowseViewController.swift in Sources */,
+				E4D1C0A52A806E5500BFF1A4 /* ShonenJumpPlus.swift in Sources */,
 				E46B12A92A7C4B27003E4C1D /* BrowseViewModel.swift in Sources */,
 				E44E2B5A2A7C396900669192 /* UIView+Extensions.swift in Sources */,
 				E46B129A2A7C49C3003E4C1D /* HistoryViewController.swift in Sources */,
@@ -984,6 +992,14 @@
 				minimumVersion = 7.0.0;
 			};
 		};
+		E4D1C0A62A8081CC00BFF1A4 /* XCRemoteSwiftPackageReference "SkeletonView" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Juanpe/SkeletonView";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1016,6 +1032,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E46B12CF2A7C7D10003E4C1D /* XCRemoteSwiftPackageReference "Kingfisher" */;
 			productName = Kingfisher;
+		};
+		E4D1C0A72A8081CC00BFF1A4 /* SkeletonView */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E4D1C0A62A8081CC00BFF1A4 /* XCRemoteSwiftPackageReference "SkeletonView" */;
+			productName = SkeletonView;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

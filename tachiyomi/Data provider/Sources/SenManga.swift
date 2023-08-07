@@ -9,7 +9,13 @@ import UIKit
 import SwiftSoup
 
 class SenManga: ParseHTTPSource {
-    static let shared = SenManga(source: .senManga)
+    static let id = "senManga"
+    override var sourceID: String { return SenManga.id }
+    override var language: Language { return .ja }
+    override var supportsLatest: Bool { return true }
+    override var name: String { return "SenManga" }
+    override var logo: String { return "sen-manga-logo" }
+    override var baseURL: String { return "https://raw.senmanga.com" }
     
     override var popularMangaSelector: String {
         return "div.mng"
@@ -42,7 +48,7 @@ class SenManga: ParseHTTPSource {
             let thumbnailURLString = try element.select(".cover img").attr("src")
             print("parsed", title, urlString)
             guard !title.isEmpty && !thumbnailURLString.isEmpty && thumbnailURLString != defaultImageURL else { return nil }
-            return SourceManga(url: url.absoluteString, title: title, thumbnailURL: thumbnailURLString, source: source)
+            return SourceManga(url: url.absoluteString, title: title, thumbnailURL: thumbnailURLString, sourceID: sourceID)
         } catch {
             return nil
         }
@@ -67,14 +73,14 @@ class SenManga: ParseHTTPSource {
             let thumbnailURLString = try element.select("img").attr("data-src")
             print("parsed", title, urlString)
             guard !title.isEmpty && !thumbnailURLString.isEmpty && thumbnailURLString != defaultImageURL else { return nil }
-            return SourceManga(url: url.absoluteString, title: title, thumbnailURL: thumbnailURLString, source: source)
+            return SourceManga(url: url.absoluteString, title: title, thumbnailURL: thumbnailURLString, sourceID: sourceID)
         } catch {
             return nil
         }
     }
     
     // MARK: - parseManga
-    override func parseManga(from html: String, _ urlString: String) -> SourceManga? {
+    override func parseManga(from html: String, _ urlString: String) async -> SourceManga? {
         do {
             let doc = try SwiftSoup.parse(html)
             var updatedManga = SourceManga(url: urlString,
@@ -82,7 +88,7 @@ class SenManga: ParseHTTPSource {
                                            author: try doc.select("h1.series").text(),
                                            description: try doc.select("div.summary").text(),
                                            thumbnailURL: try doc.select("div.cover").select("img").attr("src"),
-                                           source: source)
+                                           sourceID: sourceID)
     
             let info = try doc.select("div")
                 .filter({ $0.hasClass("items") })
@@ -130,7 +136,7 @@ class SenManga: ParseHTTPSource {
                 let numberOfPages = extractPageNumber(from: pageIndexString)
             else {
                 // No pages found. Return default 404 page
-                return .failure(ParseHTTPSourceError.noPageFound)
+                return .failure(SourceError.noPageFound)
             }
             
             var pages = [ChapterPage]()
@@ -142,8 +148,9 @@ class SenManga: ParseHTTPSource {
                 let pageURL = chapterURL + "/\(i)"
                 // prefetch first 5 pages and add empty pages to the rest
                 if i <= numberOfPrefetchedItems {
-                    let page = await fetchChapterPage(from: pageURL, at: i)
-                    pages.append(page)
+                    if let page = await refetchChapterPage(from: pageURL, at: i) {
+                        pages.append(page)
+                    }
                 } else {
                     pages.append(ChapterPage(pageURL: pageURL, pageNumber: i))
                 }
@@ -156,11 +163,9 @@ class SenManga: ParseHTTPSource {
     }
     
     // MARK: - fetchChapterPage
-    func fetchChapterPage(from pageURL: String, at pageNumber: Int) async -> ChapterPage {
+    override func refetchChapterPage(from pageURL: String, at pageNumber: Int) async -> ChapterPage? {
         let imageURL = await fetchImageURL(from: pageURL)
-        guard var imageURL = imageURL else {
-            return ChapterPage(pageURL: pageURL, pageNumber: pageNumber)
-        }
+        guard var imageURL = imageURL else { return nil }
         
         // Some pages do not include https:
         if imageURL.starts(with: "//") {

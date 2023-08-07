@@ -166,7 +166,7 @@ extension ReaderViewController {
             } else {
                 let viewController = self.viewModel.shouldShowNoPageFound ? ReaderNoPageFoundViewController() : ReaderLoadingViewController()
                 self.pageViewController.setViewControllers([ viewController ], direction: .forward, animated: false)
-                self.viewModel.currentPageViewControllerIndex = 0
+                self.viewModel.currentPageViewControllerIndex = nil
             }
         }
     }
@@ -176,7 +176,7 @@ extension ReaderViewController {
 extension ReaderViewController: UIPageViewControllerDataSource, UIPageViewControllerDelegate {
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
         // reach last page
-        if viewModel.currentPageViewControllerIndex >= viewModel.numberOfPages - 1 {
+        if let currentIndex = viewModel.currentPageViewControllerIndex, currentIndex >= viewModel.numberOfPages - 1 {
             let viewController = ReaderEndPageViewController(canLoadNextChapter: viewModel.canLoadNextChapter)
             viewController.delegate = self
             viewModel.currentPageViewControllerIndex = viewModel.numberOfPages

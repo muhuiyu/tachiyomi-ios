@@ -15,14 +15,14 @@ class ReaderViewModel: Base.ViewModel {
     let chapter: BehaviorRelay<SourceChapter?> = BehaviorRelay(value: nil)
     let pages: BehaviorRelay<[ChapterPage]> = BehaviorRelay(value: [])
     let chapters: [SourceChapter]
-    private let source: Source
+    private let sourceID: String
     
     var currentPage = BehaviorRelay(value: 0)
-    var currentPageViewControllerIndex = -1
+    var currentPageViewControllerIndex: Int? = nil
     private(set) var shouldShowNoPageFound = false
     
-    init(appCoordinator: AppCoordinator? = nil, chapters: [SourceChapter], source: Source) {
-        self.source = source
+    init(appCoordinator: AppCoordinator? = nil, chapters: [SourceChapter], sourceID: String) {
+        self.sourceID = sourceID
         self.chapters = chapters
         super.init(appCoordinator: appCoordinator)
         configureBindings()
@@ -39,37 +39,27 @@ extension ReaderViewModel {
     var isReadingLastPage: Bool {
         return currentPage.value == numberOfPages
     }
+    var canLoadNextChapter: Bool {
+        return chapterIndex.value < chapters.count - 1
+    }
 }
 
 // MARK: - Data
 extension ReaderViewModel {
     func reloadData() {
-        guard let chapterURL = chapter.value?.url else { return }
+        guard let chapter = chapter.value, let provider = SourceRegistry.getProvider(for: sourceID) else { return }
         Task {
-            switch source {
-            case .senManga:
-                let result = await SenManga.shared.getChapterPages(from: chapterURL)
-                switch result {
-                case .failure(let error):
-                    print("Error: ", error.localizedDescription)
-                    self.shouldShowNoPageFound = true
-                    pages.accept([])
-                case .success(let fetchedPages):
-                    pages.accept(fetchedPages)
-                }
-                restoreLastSession()
-            case .ganma:
-                guard let page = chapter.value?.ganmaPage else { return }
-                let fetchedPages = Ganma.shared.getChapterPages(from: page)
+            let result = await provider.getChapterPages(from: chapter)
+            switch result {
+            case .failure(let error):
+                print("Error: ", error.localizedDescription)
+                self.shouldShowNoPageFound = true
+                pages.accept([])
+            case .success(let fetchedPages):
                 pages.accept(fetchedPages)
-                restoreLastSession()
-            case .shonenJumpPlus:
-                return 
             }
+            restoreLastSession()
         }
-    }
-    var canLoadNextChapter: Bool {
-        return chapterIndex.value < chapters.count - 1
     }
     func loadNextChapter() {
         if canLoadNextChapter {
@@ -83,7 +73,6 @@ extension ReaderViewModel {
         } else {
             currentPage.accept(0)
         }
-        print("start from \(currentPage.value)")
     }
     func saveCurrentSession() {
         guard let chapterURL = chapter.value?.url, let mangaURL = chapter.value?.mangaURL else { return }
@@ -93,7 +82,6 @@ extension ReaderViewModel {
             LocalStorage.shared.saveLastReadPageNumber(currentPage.value, for: nextChapterURL) // save next chapter instead
         }
         LocalStorage.shared.saveLastReadChapterURL(chapterURL, for: mangaURL)
-        print("end at \(currentPage.value)")
     }
 }
 
@@ -150,16 +138,16 @@ extension ReaderViewModel {
 // MARK: - Private methods
 extension ReaderViewModel {
     private func fetchImageURL(at pageIndex: Int) async {
-        guard pageIndex <= numberOfPages, let pageURL = pages.value[pageIndex].pageURL else { return }
-        switch source {
-        case .senManga:
-            // Only ganma needs to fetch image
-            let page = await SenManga.shared.fetchChapterPage(from: pageURL, at: pageIndex)
+        guard
+            pageIndex <= numberOfPages,
+            let pageURL = pages.value[pageIndex].pageURL,
+            let provider = SourceRegistry.getProvider(for: sourceID)
+        else { return }
+        
+        if let page = await provider.refetchChapterPage(from: pageURL, at: pageIndex) {
             var updatedPages = pages.value
             updatedPages[pageIndex] = page
             pages.accept(updatedPages)
-        default:
-            return
         }
     }
     private func shouldFetchPage(at pageIndex: Int) -> Bool {

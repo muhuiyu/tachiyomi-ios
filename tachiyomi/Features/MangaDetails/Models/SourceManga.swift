@@ -20,7 +20,7 @@ struct SourceManga: Codable {
     var updateStrategy: UpdateStrategy?
     var isInitialized: Bool?
     var chapters: [SourceChapter]
-    var source: Source
+    var sourceID: String
     
     enum Status: String, Codable {
         case unknown
@@ -70,7 +70,7 @@ struct SourceManga: Codable {
         }
     }
     
-    init(url: String? = nil, title: String? = nil, alias: String? = nil, artist: String? = nil, author: String? = nil, description: String? = nil, genres: [String] = [], status: Status? = nil, thumbnailURL: String? = nil, updateStrategy: UpdateStrategy? = nil, isInitialized: Bool? = nil, chapters: [SourceChapter] = [], source: Source) {
+    init(url: String? = nil, title: String? = nil, alias: String? = nil, artist: String? = nil, author: String? = nil, description: String? = nil, genres: [String] = [], status: Status? = nil, thumbnailURL: String? = nil, updateStrategy: UpdateStrategy? = nil, isInitialized: Bool? = nil, chapters: [SourceChapter] = [], sourceID: String) {
         self.url = url
         self.title = title
         self.alias = alias
@@ -83,40 +83,6 @@ struct SourceManga: Codable {
         self.updateStrategy = updateStrategy
         self.isInitialized = isInitialized
         self.chapters = chapters
-        self.source = source
-    }
-}
-
-// MARK: - Ganma data decoder
-extension SourceManga {
-    init(from ganmaData: GanmaMangaOverviewRoot) {
-        self.url = Ganma.shared.getMangaURL(for: ganmaData.alias)
-        self.title = ganmaData.title
-        self.alias = ganmaData.alias
-        self.artist = nil
-        self.author = ganmaData.author.penName
-        self.description = ganmaData.overview
-        self.genres = []
-        self.status = .unknown
-        self.thumbnailURL = ganmaData.squareImage.url
-        self.updateStrategy = nil
-        self.isInitialized = nil
-        self.chapters = []
-        self.source = .ganma
-    }
-    init(from magazine: GanmaMagazine) {
-        let mangaURL = Ganma.shared.getMangaURL(for: magazine.alias)
-        self.url = mangaURL
-        self.title = magazine.title
-        self.alias = magazine.alias
-        self.author = magazine.author.penName
-        self.description = magazine.description
-        self.genres = []
-        self.status = magazine.flags.isFinished ?? false ? .completed : .ongoing
-        self.thumbnailURL = magazine.squareImage.url
-        self.updateStrategy = nil
-        self.isInitialized = true
-        self.chapters = magazine.items.enumerated().map({ $0.element.toChapter(at: $0.offset, for: mangaURL) })
-        self.source = .ganma
+        self.sourceID = sourceID
     }
 }

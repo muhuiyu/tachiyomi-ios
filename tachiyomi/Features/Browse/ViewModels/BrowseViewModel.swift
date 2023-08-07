@@ -10,31 +10,32 @@ import RxSwift
 import RxRelay
 
 class BrowseViewModel: Base.ViewModel {
-    
-    private let sources = Source.allCases
-    
-    var sourceSections: [(Language, [Source])] {
-        return sources.reduce(into: [Language: [Source]]()) { partialResult, source in
-            if let _ = partialResult[source.language] {
-                partialResult[source.language]?.append(source)
-            } else {
-                partialResult[source.language] = [source]
-            }
-        }.sorted(by: { $0.key.rawValue < $1.key.rawValue })
-    }
+    private let sourceIDs = SourceRegistry.allSourceIDs
 }
 
 extension BrowseViewModel {
-    func getSource(at indexPath: IndexPath) -> Source {
-        return sources[indexPath.row]
+    func getNumberOfSections() -> Int {
+        return SourceRegistry.groupedSourceIDsByLanguage.count
+    }
+    func getNumberOfRows(at section: Int) -> Int {
+        return SourceRegistry.groupedSourceIDsByLanguage[section].sourceIDs.count
+    }
+    func getTitle(at section: Int) -> String {
+        return SourceRegistry.groupedSourceIDsByLanguage[section].language.localizedName
+    }
+    func getSourceID(at indexPath: IndexPath) -> String {
+        return SourceRegistry.groupedSourceIDsByLanguage[indexPath.section].sourceIDs[indexPath.row]
     }
     func getSourceName(at indexPath: IndexPath) -> String {
-        return sources[indexPath.row].name
+        let sourceID = getSourceID(at: indexPath)
+        return SourceRegistry.getProvider(for: sourceID)?.name ?? ""
     }
     func getSourceLanguage(at indexPath: IndexPath) -> String {
-        return sources[indexPath.row].language.localizedName
+        let sourceID = getSourceID(at: indexPath)
+        return SourceRegistry.getProvider(for: sourceID)?.language.localizedName ?? ""
     }
     func getSourceThumbnailURL(at indexPath: IndexPath) -> String {
-        return sources[indexPath.row].logo
+        let sourceID = getSourceID(at: indexPath)
+        return SourceRegistry.getProvider(for: sourceID)?.logo ?? ""
     }
 }

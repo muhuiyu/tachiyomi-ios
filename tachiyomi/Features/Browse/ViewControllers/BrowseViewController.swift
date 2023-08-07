@@ -57,13 +57,13 @@ extension BrowseViewController {
 // MARK: - TableView DataSource and Delegate
 extension BrowseViewController: UITableViewDataSource, UITableViewDelegate {
     func numberOfSections(in tableView: UITableView) -> Int {
-        return viewModel.sourceSections.count
+        return viewModel.getNumberOfSections()
     }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel.sourceSections[section].1.count
+        return viewModel.getNumberOfRows(at: section)
     }
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return viewModel.sourceSections[section].0.localizedName
+        return viewModel.getTitle(at: section)
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: BrowseSourceCell.reuseID, for: indexPath) as? BrowseSourceCell else { return UITableViewCell() }
@@ -77,11 +77,11 @@ extension BrowseViewController: UITableViewDataSource, UITableViewDelegate {
         defer {
             tableView.deselectRow(at: indexPath, animated: true)
         }
-        let source = viewModel.getSource(at: indexPath)
-        let sourceViewModel = SourceViewModel(appCoordinator: self.appCoordinator, source: source)
+        let sourceID = viewModel.getSourceID(at: indexPath)
+        let sourceViewModel = SourceViewModel(appCoordinator: self.appCoordinator, sourceID: sourceID)
         let viewController = SourceCatalogViewController(appCoordinator: self.appCoordinator,
                                                          viewModel: sourceViewModel,
-                                                         source: source)
+                                                         sourceID: sourceID)
         navigationController?.pushViewController(viewController, animated: true)
     }
 }

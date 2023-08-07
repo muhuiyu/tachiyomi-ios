@@ -12,15 +12,22 @@ import RxRelay
 class LibraryViewModel: Base.ViewModel {
     private let sourceMangas: BehaviorRelay<[SourceManga]> = BehaviorRelay(value: [])
     let filteredMangas: BehaviorRelay<[SourceManga]> = BehaviorRelay(value: [])
+    
+    let isLoading = BehaviorRelay(value: true)
 }
 
 extension LibraryViewModel {
     func reloadData() {
+        isLoading.accept(true)
         Task {
             let fetchedMangas = await LocalStorage.shared.getLibraryMangas()
             sourceMangas.accept(fetchedMangas)
             filteredMangas.accept(fetchedMangas)
+            isLoading.accept(false)
         }
+    }
+    func getNumberOfLibraryMangas() -> Int {
+        return LocalStorage.shared.getNumberOfLibraryMangas()
     }
     func filterManga(with query: String) {
         if query.isEmpty {
@@ -40,8 +47,9 @@ extension LibraryViewModel {
         guard let indexToRemove = sourceMangas.value.firstIndex(where: { $0.url == mangaURL }) else { return }
         var mangas = sourceMangas.value
         mangas.remove(at: indexToRemove)
-        LocalStorage.shared.setLibraryMangas(to: mangas.compactMap({ $0.url }))
         sourceMangas.accept(mangas)
         filteredMangas.accept(mangas)
+        
+        LocalStorage.shared.deleteMangaFromLibrary(for: mangaURL)
     }
 }
