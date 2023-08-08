@@ -9,11 +9,12 @@ import Foundation
 import SwiftSoup
 
 class ComicK: ConfigurableSource {
-    static let id = "comicK"
     static let pictureBaseURL = "https://meo.comick.pictures"
     private let homeBaseURL = "https://comick.app"
     
-    override var sourceID: String { return ComicK.id }
+    override var sourceID: String {
+        fatalError("Not implemented")
+    }
     override var language: Language { return .en }
     override var supportsLatest: Bool { return true }
     override var name: String { return "ComicK" }
@@ -86,7 +87,7 @@ class ComicK: ConfigurableSource {
     override func parsePopularManga(from data: Data) -> [SourceManga] {
         do {
             let base = try JSONDecoder().decode(ComicKPopularMangasData.self, from: data)
-            return base.rank.compactMap({ SourceManga(from: $0, url: getMangaURL(for: $0.slug)) })
+            return base.rank.compactMap({ SourceManga(from: $0, url: getMangaURL(for: $0.slug), sourceID: sourceID) })
         } catch {
             print("Error in parsePopularManga: \(error.localizedDescription)")
             return []
@@ -120,11 +121,11 @@ class ComicK: ConfigurableSource {
     override func parseManga(from data: Data, _ urlString: String) async -> SourceManga? {
         do {
             let base = try JSONDecoder().decode(ComicKMangaData.self, from: data)
-            var updatedManga = SourceManga(from: base.pageProps, url: getMangaURL(for: base.pageProps.metadata.slug))
-            // must support English
-            if base.pageProps.languageList.contains("en") {
+            var updatedManga = SourceManga(from: base.pageProps, url: getMangaURL(for: base.pageProps.metadata.slug), sourceID: sourceID)
+            // must support target language
+            if base.pageProps.languageList.contains(language.rawValue) {
                 updatedManga.chapters = await getChapterList(
-                    from: "\(baseURL)/comic/\(base.pageProps.metadata.hid)/chapters?lang=en", urlString)
+                    from: "\(baseURL)/comic/\(base.pageProps.metadata.hid)/chapters?lang=\(language.rawValue)", urlString)
             }
             return updatedManga
         } catch {
@@ -138,14 +139,16 @@ class ComicK: ConfigurableSource {
         do {
             let base = try JSONDecoder().decode(ComicKChapterListData.self, from: data)
             print("fetched", base.chapters.count, "chapters")
-            let chapters = base.chapters.map({
-                SourceChapter(url: chapterURL,
-                              name: "chapter \($0.number) \($0.name ?? "")",
-                              uploadedDate: $0.updatedAt,
-                              chapterNumber: $0.number,
-                              mangaURL: mangaURL,
-                              comicKChapter: $0)
-            })
+            let chapters: [SourceChapter] = base.chapters.compactMap { chapter in
+                guard let number = chapter.number else { return nil }
+                let name = chapter.name != nil ? " - \(chapter.name!)" : ""
+                return SourceChapter(url: chapterURL,
+                                     name: "chapter \(number)\(name)",
+                                     uploadedDate: chapter.updatedAt,
+                                     chapterNumber: chapter.number,
+                                     mangaURL: mangaURL,
+                                     comicKChapter: chapter)
+            }
             return cleanData(chapters)
             
         } catch {
@@ -168,7 +171,7 @@ class ComicK: ConfigurableSource {
                 }
             }
         }
-        return Array(uniqueChaptersDict.values.sorted(by: { $0.chapterNumber ?? "" < $1.chapterNumber ?? "" }))
+        return Array(uniqueChaptersDict.values.sorted(by: { Double($0.chapterNumber ?? "") ?? 0 < Double($1.chapterNumber ?? "") ?? 0 }))
     }
     
     override func getChapterListRequest(from urlString: String) async -> URLRequest? {
@@ -309,7 +312,7 @@ struct ComicKChapterListData: Codable {
 
 struct ComicKChapter: Codable {
     let id: Int
-    let number: String
+    let number: String?
     let name: String?
     let updatedAt: String
     let hid: String
@@ -327,7 +330,7 @@ struct ComicKChapter: Codable {
     }
     
     func getChapterQuery() -> String {
-        return "\(hid)-chapter-\(number)-\(language)"
+        return "\(hid)-chapter-\(number ?? "")-\(language)"
     }
 }
 
@@ -395,7 +398,7 @@ struct ComicKChapterDetails: Codable {
 }
 
 extension SourceManga {
-    init(from data: ComicMangaOverviewData, url: String) {
+    init(from data: ComicMangaOverviewData, url: String, sourceID: String) {
         self.id = UUID(from: url)
         self.url = url
         self.title = data.title
@@ -409,9 +412,9 @@ extension SourceManga {
         self.updateStrategy = nil
         self.isInitialized = true
         self.chapters = []
-        self.sourceID = ComicK.id
+        self.sourceID = sourceID
     }
-    init(from data: ComicKMangaDetails, url: String) {
+    init(from data: ComicKMangaDetails, url: String, sourceID: String) {
         self.id = UUID(from: url)
         self.url = url
         self.title = data.metadata.title
@@ -425,6 +428,6 @@ extension SourceManga {
         self.updateStrategy = nil
         self.isInitialized = true
         self.chapters = []
-        self.sourceID = ComicK.id
+        self.sourceID = sourceID
     }
 }

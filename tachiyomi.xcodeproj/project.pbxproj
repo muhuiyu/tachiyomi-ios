@@ -95,6 +95,9 @@
 		E4D1C0B02A80A07E00BFF1A4 /* SundayWebEvery.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4D1C0AF2A80A07E00BFF1A4 /* SundayWebEvery.swift */; };
 		E4D1C0B22A80A24D00BFF1A4 /* CorocoroOnline.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4D1C0B12A80A24D00BFF1A4 /* CorocoroOnline.swift */; };
 		E4D1C0B42A8145F100BFF1A4 /* UUID+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4D1C0B32A8145F100BFF1A4 /* UUID+Extensions.swift */; };
+		E4EF8D9D2A82C2CE0009829B /* ComicKZHHK.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4EF8D9C2A82C2CE0009829B /* ComicKZHHK.swift */; };
+		E4EF8D9F2A82C39F0009829B /* ComicKVI.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4EF8D9E2A82C39F0009829B /* ComicKVI.swift */; };
+		E4EF8DA12A82C4FA0009829B /* ComicKEN.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4EF8DA02A82C4FA0009829B /* ComicKEN.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -180,6 +183,9 @@
 		E4D1C0AF2A80A07E00BFF1A4 /* SundayWebEvery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SundayWebEvery.swift; sourceTree = "<group>"; };
 		E4D1C0B12A80A24D00BFF1A4 /* CorocoroOnline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorocoroOnline.swift; sourceTree = "<group>"; };
 		E4D1C0B32A8145F100BFF1A4 /* UUID+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UUID+Extensions.swift"; sourceTree = "<group>"; };
+		E4EF8D9C2A82C2CE0009829B /* ComicKZHHK.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComicKZHHK.swift; sourceTree = "<group>"; };
+		E4EF8D9E2A82C39F0009829B /* ComicKVI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComicKVI.swift; sourceTree = "<group>"; };
+		E4EF8DA02A82C4FA0009829B /* ComicKEN.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComicKEN.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -629,6 +635,9 @@
 				E44FD1742A814BBE000D4D6A /* VizShonenJump.swift */,
 				E44FD1782A814D65000D4D6A /* VizManga.swift */,
 				E46E97C92A81F41500D1BDB0 /* ComicK.swift */,
+				E4EF8DA02A82C4FA0009829B /* ComicKEN.swift */,
+				E4EF8D9C2A82C2CE0009829B /* ComicKZHHK.swift */,
+				E4EF8D9E2A82C39F0009829B /* ComicKVI.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -726,6 +735,7 @@
 				E46B12872A7C423D003E4C1D /* MainTabBarController.swift in Sources */,
 				E46B12B62A7C534B003E4C1D /* MangaViewModel.swift in Sources */,
 				E44E2B542A7C396900669192 /* Icons.swift in Sources */,
+				E4EF8DA12A82C4FA0009829B /* ComicKEN.swift in Sources */,
 				E46B12EC2A7DAE48003E4C1D /* ReaderPageViewController.swift in Sources */,
 				E46B12B82A7C5391003E4C1D /* MangaDetailsViewController.swift in Sources */,
 				E44E2B582A7C396900669192 /* UIViewController+Extensions.swift in Sources */,
@@ -735,6 +745,7 @@
 				E46B12E62A7D7C7D003E4C1D /* MangaDetailsChapterCell.swift in Sources */,
 				E46B12BF2A7C56E4003E4C1D /* UpdateStrategy.swift in Sources */,
 				E46B12962A7C4999003E4C1D /* SettingsViewController.swift in Sources */,
+				E4EF8D9F2A82C39F0009829B /* ComicKVI.swift in Sources */,
 				E46B12E42A7D72ED003E4C1D /* ReaderViewModel.swift in Sources */,
 				E44E2B672A7C396900669192 /* Date+Extensions.swift in Sources */,
 				E4D1C0A12A802FDF00BFF1A4 /* StandardHTTPSource.swift in Sources */,
@@ -778,6 +789,7 @@
 				E44FD17E2A819033000D4D6A /* ScrollToTopButton.swift in Sources */,
 				E4D1C0AA2A809EE700BFF1A4 /* ComicDays.swift in Sources */,
 				E46B12C72A7C625A003E4C1D /* SenManga.swift in Sources */,
+				E4EF8D9D2A82C2CE0009829B /* ComicKZHHK.swift in Sources */,
 				E46B12902A7C4957003E4C1D /* LibraryViewController.swift in Sources */,
 				E44FD1772A814D5E000D4D6A /* Viz.swift in Sources */,
 				E44E2B4C2A7C396900669192 /* ErrorHandler.swift in Sources */,

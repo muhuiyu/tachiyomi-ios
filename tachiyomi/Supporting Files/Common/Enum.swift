@@ -52,6 +52,7 @@ enum Language: String, CaseIterable, Codable {
     case ur
     case vi
     case zh
+    case zhhk = "zh-hk"
     
     var localizedName: String {
         switch self {
@@ -100,7 +101,8 @@ enum Language: String, CaseIterable, Codable {
         case .uk: return "Українська"
         case .ur: return "اردو"
         case .vi: return "Tiếng Việt"
-        case .zh: return "中文"
+        case .zh: return "簡体中文"
+        case .zhhk: return "繁體中文"
         }
     }
 }
