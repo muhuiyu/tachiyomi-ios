@@ -6,10 +6,12 @@
 //
 
 import Foundation
+import SwiftSoup
 
 class ComicK: ConfigurableSource {
     static let id = "comicK"
     static let pictureBaseURL = "https://meo.comick.pictures"
+    private let homeBaseURL = "https://comick.app"
     
     override var sourceID: String { return ComicK.id }
     override var language: Language { return .en }
@@ -19,6 +21,44 @@ class ComicK: ConfigurableSource {
     override var baseURL: String { return "https://api.comick.app" }
     override var isDateInReversed: Bool { return false }
     
+    private var token: String? = nil
+    private let tokenTag = "$TOKEN"
+    private var numberOfGetTokenRetry = 0
+    
+    // MARK: - Token
+    private func getToken() async {
+        guard let url = URL(string: homeBaseURL + "/home") else { return }
+        numberOfGetTokenRetry += 1
+        do {
+            let (data, _) = try await URLSession.shared.data(from: url)
+            if let contents = String(data: data, encoding: .utf8) {
+                parseToken(from: contents)
+            } else {
+                token = nil
+            }
+        } catch {
+            print("An error occurred: \(error)")
+            token = nil
+        }
+    }
+    
+    private func parseToken(from html: String) {
+        // Examples:
+        // https://static.comick.app/_next/static/xImEFSRNtcUckw3c6U9KJ/_buildManifest.js
+        do {
+            let doc = try SwiftSoup.parse(html)
+            let idScript = try doc.select("script").map({ try $0.attr("src") }).first(where: { $0.hasSuffix("/_buildManifest.js") })
+            if let idScript = idScript, let range = idScript.range(of: "(?<=static/)[^/]+", options: .regularExpression) {
+                token = String(idScript[range])
+                print("Retrieved token", token)
+                numberOfGetTokenRetry = 0
+            }
+        } catch {
+            print("An error occurred: \(error)")
+            token = nil
+        }
+    }
+    
     // MARK: - Popular manga
     override func getPopularManga(at page: Int) async -> MangaPage {
         guard let request = getPopularMangaRequest(at: page) else {
@@ -27,7 +67,7 @@ class ComicK: ConfigurableSource {
         do {
             let (data, _) = try await URLSession.shared.data(for: request)
             let mangas = parsePopularManga(from: data)
-            // Ganma doesn't have next page
+            // ComicK doesn't have next page
             return MangaPage(mangas: mangas, hasNextPage: false)
         } catch {
             print("An error occurred: \(error)")
@@ -46,7 +86,7 @@ class ComicK: ConfigurableSource {
     override func parsePopularManga(from data: Data) -> [SourceManga] {
         do {
             let base = try JSONDecoder().decode(ComicKPopularMangasData.self, from: data)
-            return base.ranks.compactMap({ SourceManga(from: $0, url: getMangaURL(for: $0.slug)) })
+            return base.rank.compactMap({ SourceManga(from: $0, url: getMangaURL(for: $0.slug)) })
         } catch {
             print("Error in parsePopularManga: \(error.localizedDescription)")
             return []
@@ -66,16 +106,15 @@ class ComicK: ConfigurableSource {
     
     override func parseSearchedManga(from data: Data) -> SourceManga? {
         // TODO: -
+        return nil
     }
 
     // MARK: - Get manga
-    override func getMangaRequest(for urlString: String) -> URLRequest? {
+    override func getMangaRequest(for urlString: String) async -> URLRequest? {
         // Example:
-        // https://comick.app/_next/data/eUWFwglutFnq04NZoJM13/comic/00-jujutsu-kaisen.json
-        guard let url = URL(string: urlString) else { return nil }
-        var request = URLRequest(url: url)
-        request.addValue(baseURL, forHTTPHeaderField: "X-From")
-        return request
+        // https://comick.app/_next/data/$TOKEN/comic/00-jujutsu-kaisen.json
+        guard let url = URL(string: await convertURL(from: urlString)) else { return nil }
+        return URLRequest(url: url)
     }
 
     override func parseManga(from data: Data, _ urlString: String) async -> SourceManga? {
@@ -98,20 +137,41 @@ class ComicK: ConfigurableSource {
     override func parseChapterList(from data: Data, _ chapterURL: String, _ mangaURL: String) -> [SourceChapter] {
         do {
             let base = try JSONDecoder().decode(ComicKChapterListData.self, from: data)
-            return base.chapters.map({
+            print("fetched", base.chapters.count, "chapters")
+            let chapters = base.chapters.map({
                 SourceChapter(url: chapterURL,
-                              name: $0.name,
+                              name: "chapter \($0.number) \($0.name ?? "")",
                               uploadedDate: $0.updatedAt,
                               chapterNumber: $0.number,
                               mangaURL: mangaURL,
-                              comicKChapter: $0) })
+                              comicKChapter: $0)
+            })
+            return cleanData(chapters)
             
         } catch {
             print("Error in parseChapterList: \(error.localizedDescription)")
             return []
         }
     }
-    override func getChapterListRequest(from urlString: String) -> URLRequest? {
+    
+    private func cleanData(_ chapters: [SourceChapter]) -> [SourceChapter] {
+        // Remove duplicated chapter numbers
+        var uniqueChaptersDict = [String: SourceChapter]()
+        for chapter in chapters {
+            if let chapterNumber = chapter.chapterNumber {
+                if let existingChapter = uniqueChaptersDict[chapterNumber] {
+                    if existingChapter.name.isEmpty && !chapter.name.isEmpty {
+                        uniqueChaptersDict[chapterNumber] = chapter
+                    }
+                } else {
+                    uniqueChaptersDict[chapterNumber] = chapter
+                }
+            }
+        }
+        return Array(uniqueChaptersDict.values.sorted(by: { $0.chapterNumber ?? "" < $1.chapterNumber ?? "" }))
+    }
+    
+    override func getChapterListRequest(from urlString: String) async -> URLRequest? {
         // Example:
         // https://api.comick.app/comic/TA22I5O7/chapters?lang=en
         guard let url = URL(string: urlString) else { return nil }
@@ -119,20 +179,32 @@ class ComicK: ConfigurableSource {
     }
 
     // MARK: - Chapter Pages
-    override func getChapterPagesRequest(from chapter: SourceChapter) -> URLRequest? {
+    override func getChapterPagesRequest(from chapter: SourceChapter) async -> URLRequest? {
         // Example:
-        // https://comick.app/_next/data/eUWFwglutFnq04NZoJM13/comic/00-jujutsu-kaisen/TqsSaVdf-chapter-229-en.json
-        guard
-            let kChapter = chapter.comicKChapter,
-            let prefix = chapter.mangaURL.components(separatedBy: ".").first // before .json
-        else { return nil }
-        let urlString = "\(prefix)/\(kChapter.hid)-chapter-\(kChapter.number)-\(kChapter.language).json"
-        guard let url = URL(string: urlString) else { return nil }
+        // https://comick.app/_next/data/$TOKEN/comic/00-jujutsu-kaisen/TqsSaVdf-chapter-229-en.json
+        // https://comick.app/_next/data/xImEFSRNtcUckw3c6U9KJ/comic/00-jujutsu-kaisen/1lRpoFiB-chapter-230-en.json
+        guard let kChapter = chapter.comicKChapter else { return nil }
+        let urlString = chapter.mangaURL.replacingOccurrences(of: ".json",
+                                                              with: "/\(kChapter.getChapterQuery()).json")
+        guard let url = URL(string: await convertURL(from: urlString)) else { return nil }
         return URLRequest(url: url)
     }
     
     override func parseChapterPages(from data: Data, _ chapterURL: String, _ mangaURL: String) async -> [ChapterPage] {
-        // TODO: - 
+        do {
+            let base = try JSONDecoder().decode(ComicKChapterDetailsData.self, from: data)
+            guard let pages = base.pageProps.chapter.pages else { return [] }
+            return pages.enumerated().map({
+                ChapterPage(
+                    pageURL: "\(ComicK.pictureBaseURL)/\($0.element.b2key)",
+                    pageNumber: $0.offset,
+                    imageURL: "\(ComicK.pictureBaseURL)/\($0.element.b2key)"
+                )
+            })
+        } catch {
+            print("Error in parseChapterPages: \(error.localizedDescription)")
+            return []
+        }
     }
 
     override func refetchChapterPage(from pageURL: String, at pageNumber: Int) async -> ChapterPage? {
@@ -143,21 +215,32 @@ class ComicK: ConfigurableSource {
 // MARK: - Private Methods
 extension ComicK {
     private func getMangaURL(for alias: String) -> String {
-        return "\(baseURL)/_next/data/eUWFwglutFnq04NZoJM13/comic/\(alias).json"
+        return "\(homeBaseURL)/_next/data/\(tokenTag)/comic/\(alias).json"
+    }
+    private func convertURL(from urlString: String) async -> String {
+        if let token = token {
+            return urlString.replacingOccurrences(of: tokenTag, with: token)
+        }
+        if numberOfGetTokenRetry > 3 {
+            print("Error: reached maximum number of token retry")
+            return ""
+        }
+        await getToken()
+        return await convertURL(from: urlString)
     }
 }
 
 
 // MARK: - Data models
 struct ComicKPopularMangasData: Decodable {
-    var ranks: [ComicMangaOverviewData]
+    var rank: [ComicMangaOverviewData]
     var recentRank: [ComicMangaOverviewData]
     var trending: ComickTrendingMangasData
     var latestMangas: [ComicMangaOverviewData]
     var completedMangas: [ComicMangaOverviewData]
     
     enum CodingKeys: String, CodingKey {
-        case ranks
+        case rank
         case recentRank
         case trending
         case latestMangas = "news"
@@ -167,7 +250,7 @@ struct ComicKPopularMangasData: Decodable {
     
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.ranks = try container.decode([ComicMangaOverviewData].self, forKey: .ranks)
+        self.rank = try container.decode([ComicMangaOverviewData].self, forKey: .rank)
         self.recentRank = try container.decode([ComicMangaOverviewData].self, forKey: .recentRank)
         self.trending = try container.decode(ComickTrendingMangasData.self, forKey: .trending)
         let firstPartOfLatests = try container.decode([ComicMangaOverviewData].self, forKey: .latestMangas)
@@ -225,12 +308,13 @@ struct ComicKChapterListData: Codable {
 }
 
 struct ComicKChapter: Codable {
-    let id: String
+    let id: Int
     let number: String
-    let name: String
+    let name: String?
     let updatedAt: String
     let hid: String
     let language: String
+    let pages: [ComicKFile]?
     
     enum CodingKeys: String, CodingKey {
         case id
@@ -239,6 +323,11 @@ struct ComicKChapter: Codable {
         case updatedAt = "updated_at"
         case hid
         case language = "lang"
+        case pages = "md_images"
+    }
+    
+    func getChapterQuery() -> String {
+        return "\(hid)-chapter-\(number)-\(language)"
     }
 }
 
@@ -273,7 +362,6 @@ struct ComicKMangaMetadata: Codable {
     let title: String
     let country: String
     let status: Int
-    let links: [ComicKMangaMetadataLink]
     let lastChapter: String
     let chapterCount: Int
     let description: String
@@ -288,7 +376,6 @@ struct ComicKMangaMetadata: Codable {
         case title
         case country
         case status
-        case links
         case lastChapter = "last_chapter"
         case chapterCount = "chapter_count"
         case description = "desc"
@@ -299,8 +386,12 @@ struct ComicKMangaMetadata: Codable {
     }
 }
 
-struct ComicKMangaMetadataLink: Codable {
-    
+struct ComicKChapterDetailsData: Codable {
+    let pageProps: ComicKChapterDetails
+}
+
+struct ComicKChapterDetails: Codable {
+    let chapter: ComicKChapter
 }
 
 extension SourceManga {
@@ -337,5 +428,3 @@ extension SourceManga {
         self.sourceID = ComicK.id
     }
 }
-
-// eUWFwglutFnq04NZoJM13

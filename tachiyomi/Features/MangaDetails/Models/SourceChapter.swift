@@ -23,7 +23,7 @@ struct SourceChapter: Codable {
     // ComicK only
     var comicKChapter: ComicKChapter?
     
-    init(url: String, name: String, uploadedDate: String, chapterNumber: String?, mangaURL: String, scanlator: String? = nil, ganmaPage: GanmaMagazinePage? = nil, comicKChapter: ComicKChapter?) {
+    init(url: String, name: String, uploadedDate: String, chapterNumber: String?, mangaURL: String, scanlator: String? = nil, ganmaPage: GanmaMagazinePage? = nil, comicKChapter: ComicKChapter? = nil) {
         self.url = url
         self.name = name
         self.uploadedDate = uploadedDate

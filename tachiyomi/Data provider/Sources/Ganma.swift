@@ -59,7 +59,7 @@ class Ganma: ConfigurableSource {
         }
     }
     
-    override func getMangaRequest(for urlString: String) -> URLRequest? {
+    override func getMangaRequest(for urlString: String) async -> URLRequest? {
         guard let url = URL(string: urlString) else { return nil }
         var request = URLRequest(url: url)
         request.addValue(baseURL, forHTTPHeaderField: "X-From")

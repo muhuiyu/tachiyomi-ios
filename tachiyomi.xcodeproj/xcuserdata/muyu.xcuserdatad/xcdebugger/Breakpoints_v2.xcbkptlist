@@ -394,53 +394,5 @@
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "7A4C4910-DD2C-40F7-8BF0-AD32D2651C13"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "tachiyomi/Features/Library/View/MangaPreviewCell.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "81"
-            endingLineNumber = "81"
-            landmarkName = "reconfigureImage(from:)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "7A4C4910-DD2C-40F7-8BF0-AD32D2651C13 - adfd4a0f5645d9d1"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 @Swift.MainActor () -&gt; () in tachiyomi.MangaPreviewCell.reconfigureImage(from: Swift.String) -&gt; ()"
-                  moduleName = "tachiyomi"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/muyu/Dev/mine/tachiyomi-copycat/ios/tachiyomi/tachiyomi/Features/Library/View/MangaPreviewCell.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "81"
-                  endingLineNumber = "81"
-                  offsetFromSymbolStart = "680">
-               </Location>
-               <Location
-                  uuid = "7A4C4910-DD2C-40F7-8BF0-AD32D2651C13 - adfd4a0f5645d9d1"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 @Swift.MainActor () -&gt; () in tachiyomi.MangaPreviewCell.reconfigureImage(from: Swift.String) -&gt; ()"
-                  moduleName = "tachiyomi"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/muyu/Dev/mine/tachiyomi-copycat/ios/tachiyomi/tachiyomi/Features/Library/View/MangaPreviewCell.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "81"
-                  endingLineNumber = "81"
-                  offsetFromSymbolStart = "864">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
    </Breakpoints>
 </Bucket>

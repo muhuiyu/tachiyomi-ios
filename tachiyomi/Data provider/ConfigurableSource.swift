@@ -43,7 +43,7 @@ class ConfigurableSource: SourceProtocol {
     }
     
     func getManga(from urlString: String) async -> SourceManga? {
-        guard let request = getMangaRequest(for: urlString) else { return nil }
+        guard let request = await getMangaRequest(for: urlString) else { return nil }
         do {
             let (data, _) = try await URLSession.shared.data(for: request)
             return await parseManga(from: data, urlString)
@@ -54,7 +54,7 @@ class ConfigurableSource: SourceProtocol {
     }
     
     func getChapterList(from chapterURL: String, _ mangaURL: String) async -> [SourceChapter] {
-        guard let request = getChapterListRequest(from: chapterURL) else { return [] }
+        guard let request = await getChapterListRequest(from: chapterURL) else { return [] }
         do {
             let (data, _) = try await URLSession.shared.data(for: request)
             return parseChapterList(from: data, chapterURL, mangaURL)
@@ -66,14 +66,14 @@ class ConfigurableSource: SourceProtocol {
     func parseChapterList(from data: Data, _ chapterURL: String, _ mangaURL: String) -> [SourceChapter] {
         fatalError("Not implemented")
     }
-    func getChapterListRequest(from urlString: String) -> URLRequest? {
+    func getChapterListRequest(from urlString: String) async -> URLRequest? {
         fatalError("Not implemented")
     }
     func searchMangas(for query: String, at page: Int) async -> MangaPage {
         fatalError("Not implemented")
     }
     func getChapterPages(from chapter: SourceChapter) async -> Result<[ChapterPage], Error> {
-        guard let request = getChapterPagesRequest(from: chapter) else { return .failure(SourceError.noPageFound) }
+        guard let request = await getChapterPagesRequest(from: chapter) else { return .failure(SourceError.noPageFound) }
         do {
             let (data, _) = try await URLSession.shared.data(for: request)
             let pages = await parseChapterPages(from: data, chapter.url, chapter.mangaURL)
@@ -84,9 +84,9 @@ class ConfigurableSource: SourceProtocol {
         }
     }
     func parseChapterPages(from data: Data, _ chapterURL: String, _ mangaURL: String) async -> [ChapterPage] {
-        
+        fatalError("Not implemented")
     }
-    func getChapterPagesRequest(from chapter: SourceChapter) -> URLRequest? {
+    func getChapterPagesRequest(from chapter: SourceChapter) async -> URLRequest? {
         fatalError("Not implemented")
     }
     func getPopularMangaRequest(at page: Int) -> URLRequest? {
@@ -104,7 +104,7 @@ class ConfigurableSource: SourceProtocol {
     func parseSearchedManga(from data: Data) -> SourceManga? {
         fatalError("Not implemented")
     }
-    func getMangaRequest(for identifier: String) -> URLRequest? {
+    func getMangaRequest(for identifier: String) async -> URLRequest? {
         fatalError("Not implemented")
     }
     func parseManga(from data: Data, _ urlString: String) async -> SourceManga? {
