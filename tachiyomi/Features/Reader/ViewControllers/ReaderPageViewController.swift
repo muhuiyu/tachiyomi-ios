@@ -67,34 +67,61 @@ extension ReaderPageViewController {
     }
     private func reconfigureImage() {
         guard let page = readerViewModel.getPage(at: pageIndex), let imageURLString = page.imageURL else { return }
+        guard let urlScheme = imageURLString.getURLScheme() else { return }
         
-        DispatchQueue.main.async { [weak self] in
-            guard let self = self else { return }
-            
-            let placeholder = UIImage(systemName: Icons.photoFill)
-            // TODO: - Change to proper prefix
+        switch urlScheme {
+        case .local:
+            self.storeImage(from: imageURLString)
+        case .remote:
             if imageURLString.starts(with: "https://cdn") {
-                self.imageView.image = placeholder
-                guard let width = page.width, let height = page.height else { return }
-                Task {
-                    if let image = await self.downloadImage(from: imageURLString) {
-                        DispatchQueue.main.async { [weak self] in
-                            self?.imageView.image = self?.complexDrawingAndCellShifting(image: image, width: width, height: height)
-                        }
-                    }
-                }
-                
+                // TODO: - Change to proper prefix
+                fetchEncodedImage(for: page, from: imageURLString)
             } else {
-                if let modifer = page.modifier {
-                    // TODO: - 403...
-                    self.imageView.kf.setImage(with: URL(string: imageURLString), placeholder: placeholder, options: [.requestModifier(modifer)])
+                if let modifier = page.modifier {
+                    fetchImageWithAuth(for: page, from: imageURLString, modifier)
                 } else {
-                    self.imageView.kf.setImage(with: URL(string: imageURLString), placeholder: placeholder)
+                    fetchImage(from: imageURLString)
+                }
+            }
+        case .unknown:
+            return
+        }
+    }
+    private func storeImage(from url: String) {
+        DispatchQueue.main.async { [weak self] in
+            if let image = UIImage(contentsOfFile: url) {
+                self?.imageView.image = image
+            }
+        }
+    }
+    private func fetchEncodedImage(for page: ChapterPage, from url: String) {
+        let placeholder = UIImage(systemName: Icons.photoFill)
+        DispatchQueue.main.async { [weak self] in
+            self?.imageView.image = placeholder
+            guard let width = page.width, let height = page.height else { return }
+            Task {
+                if let image = await self?.downloadEncodedImage(from: url) {
+                    DispatchQueue.main.async { [weak self] in
+                        self?.imageView.image = self?.complexDrawingAndCellShifting(image: image, width: width, height: height)
+                    }
                 }
             }
         }
     }
-    private func downloadImage(from urlString: String) async -> UIImage? {
+    private func fetchImageWithAuth(for page: ChapterPage, from url: String, _ modifier: AnyModifier) {
+        // TODO: - 403...
+        let placeholder = UIImage(systemName: Icons.photoFill)
+        DispatchQueue.main.async { [weak self] in
+            self?.imageView.kf.setImage(with: URL(string: url), placeholder: placeholder, options: [.requestModifier(modifier)])
+        }
+    }
+    private func fetchImage(from url: String) {
+        let placeholder = UIImage(systemName: Icons.photoFill)
+        DispatchQueue.main.async { [weak self] in
+            self?.imageView.kf.setImage(with: URL(string: url), placeholder: placeholder)
+        }
+    }
+    private func downloadEncodedImage(from urlString: String) async -> UIImage? {
         do {
             guard let url = URL(string: urlString) else { return nil }
             let (data, _) = try await URLSession.shared.data(from: url)
@@ -104,7 +131,6 @@ extension ReaderPageViewController {
             return nil
         }
     }
-
 }
 
 extension ReaderPageViewController: UIScrollViewDelegate {

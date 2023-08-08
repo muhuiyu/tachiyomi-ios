@@ -11,6 +11,10 @@ import RxRelay
 
 class MangaDetailsViewController: Base.MVVMViewController<MangaViewModel> {
     
+    // MARK: - Download
+    private var downloadingImageURLs = [String: DownloadImageEntry]()
+    private var downloadTasks: [String: URLSession] = [:]
+    
     // MARK: - Views
     private let tableView = UITableView()
     private let scrollToTopButton = ScrollToTopButton()
@@ -46,7 +50,6 @@ extension MangaDetailsViewController {
                                               sourceID: viewModel.sourceID)
         let navigationController = ReaderViewController(appCoordinator: self.appCoordinator,
                                                         viewModel: readerViewModel).embedInNavgationController()
-        navigationController.isModalInPresentation = true
         navigationController.modalPresentationStyle = .fullScreen
         present(navigationController, animated: true)
     }
@@ -165,7 +168,9 @@ extension MangaDetailsViewController: UITableViewDataSource, UITableViewDelegate
             guard let cell = tableView.dequeueReusableCell(withIdentifier: MangaDetailsChapterCell.reuseID, for: indexPath) as? MangaDetailsChapterCell else {
                 return UITableViewCell()
             }
+            cell.indexPath = indexPath
             let chapter = viewModel.manga.value?.chapters[indexPath.row - 1]
+            cell.isDownloaded = viewModel.canRestoreSavedChapter(for: chapter)
             cell.chapter = chapter
             cell.delegate = self
             return cell
@@ -214,40 +219,82 @@ extension MangaDetailsViewController: MangaDetailsHeaderCellDelegate, MangaDetai
             UIApplication.shared.open(url)
         }
     }
-    func mangaDetailsChapterCellDidTapDownload() {
-        // download image and save in cache
+    func mangaDetailsChapterCellDidTapDownload(_ cell: MangaDetailsChapterCell, at indexPath: IndexPath) {
+        cell.downloadState = .downloading
+        Task {
+            await download(cell.chapter, at: indexPath)
+        }
     }
 }
 
-import UIKit
-
-class ScrollToTopButton: UIView {
-    
-    private let iconView = UIImageView(image: UIImage(systemName: Icons.arrowUp))
-    var tapHandler: (() -> Void)?
-    
-    override init(frame: CGRect = .zero) {
-        super.init(frame: frame)
-        iconView.contentMode = .scaleAspectFit
-        backgroundColor = .white
-        layer.cornerRadius = 20
-        layer.borderColor = UIColor.lightGray.cgColor
-        layer.borderWidth = 1
-        addSubview(iconView)
-        iconView.snp.remakeConstraints { make in
-            make.edges.equalToSuperview().inset(8)
+// MARK: - Download chapters
+extension MangaDetailsViewController {
+    private func download(_ chapter: SourceChapter?, at indexPath: IndexPath) async {
+        guard let chapter = chapter else { return }
+        
+        viewModel.createDirectoryIfNeeded(for: chapter)
+        
+        // Check if a download task for this chapter already exists
+        if let existingSession = downloadTasks[chapter.url] {
+            existingSession.invalidateAndCancel()
+            return
         }
-        let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapInView))
-        addGestureRecognizer(tapRecognizer)
+        
+        let session = URLSession(configuration: URLSessionConfiguration.default)
+        downloadTasks[chapter.url] = session    // Store the URLSession in the dictionary with chapter.url as the key
+        let pages = await viewModel.fetchPages(for: chapter)
+        updateNumberOfTotalPages(forCellAt: indexPath, totalPage: pages.count)
+        
+        do {
+            try await withThrowingTaskGroup(of: (Int, URL, (URL, URLResponse)).self) { group in
+                for (i, page) in pages.enumerated() {
+                    guard let imageURL = page.imageURL, let url = URL(string: imageURL) else {
+                        return
+                    }
+                    group.addTask {
+                        return (i, url, try await session.download(from: url))
+                    }
+                }
+                for try await (pageIndex, url, (location, _)) in group {
+                    if let targetPath = chapter.getLocalStoragePath()?.appendingPathComponent(parseFileName(from: url, at: pageIndex)) {
+                        try FileManager.default.moveItem(at: location, to: targetPath)
+                    }
+                    downloadTasks[chapter.url]?.finishTasksAndInvalidate()
+                    updateProgress(forCellAt: indexPath)
+                }
+            }
+        } catch {
+            print(error)
+        }
     }
     
-    @objc
-    private func didTapInView() {
-        tapHandler?()
+    private func updateNumberOfTotalPages(forCellAt indexPath: IndexPath, totalPage: Int) {
+        DispatchQueue.main.async { [weak self] in
+            if let cell = self?.tableView.cellForRow(at: indexPath) as? MangaDetailsChapterCell {
+                cell.totalPages = totalPage
+            }
+        }
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    private func updateProgress(forCellAt indexPath: IndexPath) {
+        DispatchQueue.main.async { [weak self] in
+            if let cell = self?.tableView.cellForRow(at: indexPath) as? MangaDetailsChapterCell {
+                cell.numberOfDownloadedItems += 1
+            }
+        }
     }
     
+    private func parseFileName(from url: URL, at pageIndex: Int) -> String {
+        if let fileExtension = url.lastPathComponent.components(separatedBy: ".").last {
+            return String(pageIndex) + "." +  fileExtension
+        } else {
+            return url.lastPathComponent
+        }
+    }
+    
+    private struct DownloadImageEntry {
+        let chapter: SourceChapter
+        let pageIndex: Int
+        let cellIndexPath: IndexPath
+    }
 }

@@ -66,7 +66,22 @@ class Ganma: ConfigurableSource {
         return request
     }
     
-    override func parseManga(from data: Data) -> SourceManga? {
+    override func searchMangas(for query: String, at page: Int) async -> MangaPage {
+        // Not supported, filter from popular mangas
+        let popularMangaPage = await getPopularManga(at: page)
+        let filteredMangas = popularMangaPage.mangas.filter { manga in
+            guard let mangaTitle = manga.title else { return false }
+            for word in query.split(separator: " ") {
+                if mangaTitle.contains(word) {
+                    return true
+                }
+            }
+            return false
+        }
+        return MangaPage(mangas: filteredMangas, hasNextPage: popularMangaPage.hasNextPage)
+    }
+    
+    override func parseManga(from data: Data, _ urlString: String) async -> SourceManga? {
         do {
             let base = try JSONDecoder().decode(GanmaMangaDetailsData.self, from: data)
             return SourceManga(from: base.root, url: getMangaURL(for: base.root.alias))
@@ -219,7 +234,7 @@ struct GanmaMagazineStoryItem: Codable {
         case afterwordImage
     }
     
-    func toChapter(at index: Int, for mangaURL: String?) -> SourceChapter {
+    func toChapter(at index: Int, for mangaURL: String) -> SourceChapter {
         var name = title
         if let subtitle = subtitle {
             name += "- \(subtitle)"
@@ -273,6 +288,7 @@ struct GanmaMagazineNewestStoryInformation: Codable {
 // MARK: - Ganma data decoder
 extension SourceManga {
     init(from ganmaData: GanmaMangaOverviewRoot, url: String) {
+        self.id = UUID(from: url)
         self.url = url
         self.title = ganmaData.title
         self.alias = ganmaData.alias
@@ -289,6 +305,7 @@ extension SourceManga {
     }
     init(from magazine: GanmaMagazine, url: String) {
         let mangaURL = url
+        self.id = UUID(from: mangaURL)
         self.url = mangaURL
         self.title = magazine.title
         self.alias = magazine.alias

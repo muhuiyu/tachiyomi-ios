@@ -12,7 +12,7 @@ struct SourceChapter: Codable {
     var name: String
     var uploadedDate: String
     var chapterNumber: String?
-    var mangaURL: String?
+    var mangaURL: String
     
     // Sen Manga only
     var scanlator: String?
@@ -20,7 +20,10 @@ struct SourceChapter: Codable {
     // Ganma only
     var ganmaPage: GanmaMagazinePage?
     
-    init(url: String, name: String, uploadedDate: String, chapterNumber: String?, mangaURL: String?, scanlator: String? = nil, ganmaPage: GanmaMagazinePage? = nil) {
+    // ComicK only
+    var comicKChapter: ComicKChapter?
+    
+    init(url: String, name: String, uploadedDate: String, chapterNumber: String?, mangaURL: String, scanlator: String? = nil, ganmaPage: GanmaMagazinePage? = nil, comicKChapter: ComicKChapter?) {
         self.url = url
         self.name = name
         self.uploadedDate = uploadedDate
@@ -28,5 +31,14 @@ struct SourceChapter: Codable {
         self.mangaURL = mangaURL
         self.scanlator = scanlator
         self.ganmaPage = ganmaPage
+        self.comicKChapter = comicKChapter
+    }
+    
+    func getLocalStoragePath() -> URL? {
+        guard let documents = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return nil }
+        return documents
+            .appendingPathComponent("tachiyomi")
+            .appendingPathComponent(UUID(from: mangaURL).uuidString)
+            .appendingPathComponent(UUID(from: url).uuidString)
     }
 }

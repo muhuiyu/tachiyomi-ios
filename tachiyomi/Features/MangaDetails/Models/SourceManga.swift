@@ -8,7 +8,8 @@
 import UIKit
 
 struct SourceManga: Codable {
-    var url: String?
+    let id: UUID
+    var url: String
     var title: String?
     var alias: String?
     var artist: String?
@@ -70,7 +71,8 @@ struct SourceManga: Codable {
         }
     }
     
-    init(url: String? = nil, title: String? = nil, alias: String? = nil, artist: String? = nil, author: String? = nil, description: String? = nil, genres: [String] = [], status: Status? = nil, thumbnailURL: String? = nil, updateStrategy: UpdateStrategy? = nil, isInitialized: Bool? = nil, chapters: [SourceChapter] = [], sourceID: String) {
+    init(url: String, title: String? = nil, alias: String? = nil, artist: String? = nil, author: String? = nil, description: String? = nil, genres: [String] = [], status: Status? = nil, thumbnailURL: String? = nil, updateStrategy: UpdateStrategy? = nil, isInitialized: Bool? = nil, chapters: [SourceChapter] = [], sourceID: String) {
+        self.id = UUID(from: url)
         self.url = url
         self.title = title
         self.alias = alias
@@ -84,5 +86,12 @@ struct SourceManga: Codable {
         self.isInitialized = isInitialized
         self.chapters = chapters
         self.sourceID = sourceID
+    }
+    
+    func getLocalStoragePath() -> URL? {
+        guard let documents = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return nil }
+        return documents
+            .appendingPathComponent("tachiyomi")
+            .appendingPathComponent(UUID(from: url).uuidString)
     }
 }

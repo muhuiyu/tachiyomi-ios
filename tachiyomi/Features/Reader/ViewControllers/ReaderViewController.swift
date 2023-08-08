@@ -55,6 +55,10 @@ extension ReaderViewController {
         isLightOn = !isLightOn
     }
     @objc
+    private func didSwipeDown(_ sender: UISwipeGestureRecognizer) {
+        self.dismiss(animated: true)
+    }
+    @objc
     private func didDragSlider(_ sender: UISlider) {
         var currentIndex: Float = 0
         if sender.value < 0 {
@@ -156,6 +160,11 @@ extension ReaderViewController {
     private func configureGestures() {
         let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapInView))
         view.addGestureRecognizer(tapRecognizer)
+        
+        let swipeRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(didSwipeDown(_:)))
+        swipeRecognizer.direction = .down
+        swipeRecognizer.delegate = self
+        pageViewController.view.addGestureRecognizer(swipeRecognizer)
     }
     private func changePageViewControllerContent(to pageIndex: Int) {
         DispatchQueue.main.async { [weak self] in
@@ -214,3 +223,8 @@ extension ReaderViewController: ReaderEndPageViewControllerDelegate {
     }
 }
 
+extension ReaderViewController: UIGestureRecognizerDelegate {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return true
+    }
+}

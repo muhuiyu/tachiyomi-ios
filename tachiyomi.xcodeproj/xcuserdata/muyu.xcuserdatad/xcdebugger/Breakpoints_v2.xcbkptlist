@@ -252,6 +252,81 @@
                   endingLineNumber = "59"
                   offsetFromSymbolStart = "2664">
                </Location>
+               <Location
+                  uuid = "90C40F4E-B04C-42C8-B42F-22CDDD4BC519 - c1df04fce8b93a7f"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "tachiyomi.StandardHTTPSource.parseSearchedManga(from: SwiftSoup.Element) -&gt; Swift.Optional&lt;tachiyomi.SourceManga&gt;"
+                  moduleName = "tachiyomi"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/muyu/Dev/mine/tachiyomi-copycat/ios/tachiyomi/tachiyomi/Data%20provider/StandardHTTPSource.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "59"
+                  endingLineNumber = "59"
+                  offsetFromSymbolStart = "896">
+               </Location>
+               <Location
+                  uuid = "90C40F4E-B04C-42C8-B42F-22CDDD4BC519 - c1df04fce8b93a7f"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "tachiyomi.StandardHTTPSource.parseSearchedManga(from: SwiftSoup.Element) -&gt; Swift.Optional&lt;tachiyomi.SourceManga&gt;"
+                  moduleName = "tachiyomi"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/muyu/Dev/mine/tachiyomi-copycat/ios/tachiyomi/tachiyomi/Data%20provider/StandardHTTPSource.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "59"
+                  endingLineNumber = "59"
+                  offsetFromSymbolStart = "2196">
+               </Location>
+               <Location
+                  uuid = "90C40F4E-B04C-42C8-B42F-22CDDD4BC519 - c1df04fce8b93a7f"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "tachiyomi.StandardHTTPSource.parseSearchedManga(from: SwiftSoup.Element) -&gt; Swift.Optional&lt;tachiyomi.SourceManga&gt;"
+                  moduleName = "tachiyomi"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/muyu/Dev/mine/tachiyomi-copycat/ios/tachiyomi/tachiyomi/Data%20provider/StandardHTTPSource.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "59"
+                  endingLineNumber = "59"
+                  offsetFromSymbolStart = "956">
+               </Location>
+               <Location
+                  uuid = "90C40F4E-B04C-42C8-B42F-22CDDD4BC519 - c1df04fce8b93a7f"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "tachiyomi.StandardHTTPSource.parseSearchedManga(from: SwiftSoup.Element) -&gt; Swift.Optional&lt;tachiyomi.SourceManga&gt;"
+                  moduleName = "tachiyomi"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/muyu/Dev/mine/tachiyomi-copycat/ios/tachiyomi/tachiyomi/Data%20provider/StandardHTTPSource.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "59"
+                  endingLineNumber = "59"
+                  offsetFromSymbolStart = "1024">
+               </Location>
+               <Location
+                  uuid = "90C40F4E-B04C-42C8-B42F-22CDDD4BC519 - c1df04fce8b93a7f"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "tachiyomi.StandardHTTPSource.parseSearchedManga(from: SwiftSoup.Element) -&gt; Swift.Optional&lt;tachiyomi.SourceManga&gt;"
+                  moduleName = "tachiyomi"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/muyu/Dev/mine/tachiyomi-copycat/ios/tachiyomi/tachiyomi/Data%20provider/StandardHTTPSource.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "59"
+                  endingLineNumber = "59"
+                  offsetFromSymbolStart = "2256">
+               </Location>
             </Locations>
          </BreakpointContent>
       </BreakpointProxy>
@@ -271,7 +346,7 @@
             landmarkType = "7">
             <Locations>
                <Location
-                  uuid = "F8BD0E05-C035-4432-8008-4116F9081333 - f787fd9f2181adeb"
+                  uuid = "F8BD0E05-C035-4432-8008-4116F9081333 - f787fd9f2181ad88"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
@@ -281,9 +356,9 @@
                   urlString = "file:///Users/muyu/Dev/mine/tachiyomi-copycat/ios/tachiyomi/tachiyomi/Features/Reader/ViewModels/ReaderViewModel.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "51"
-                  endingLineNumber = "51"
-                  offsetFromSymbolStart = "48">
+                  startingLineNumber = "52"
+                  endingLineNumber = "52"
+                  offsetFromSymbolStart = "32">
                </Location>
                <Location
                   uuid = "F8BD0E05-C035-4432-8008-4116F9081333 - f787fd9f2181ad88"
@@ -299,6 +374,70 @@
                   startingLineNumber = "52"
                   endingLineNumber = "52"
                   offsetFromSymbolStart = "48">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "AF808AFA-102A-4F57-A3B1-769E927E1D53"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "tachiyomi/Features/Library/View/MangaPreviewCell.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "82"
+            endingLineNumber = "82"
+            landmarkName = "reconfigureImage(from:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "7A4C4910-DD2C-40F7-8BF0-AD32D2651C13"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "tachiyomi/Features/Library/View/MangaPreviewCell.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "81"
+            endingLineNumber = "81"
+            landmarkName = "reconfigureImage(from:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "7A4C4910-DD2C-40F7-8BF0-AD32D2651C13 - adfd4a0f5645d9d1"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 @Swift.MainActor () -&gt; () in tachiyomi.MangaPreviewCell.reconfigureImage(from: Swift.String) -&gt; ()"
+                  moduleName = "tachiyomi"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/muyu/Dev/mine/tachiyomi-copycat/ios/tachiyomi/tachiyomi/Features/Library/View/MangaPreviewCell.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "81"
+                  endingLineNumber = "81"
+                  offsetFromSymbolStart = "680">
+               </Location>
+               <Location
+                  uuid = "7A4C4910-DD2C-40F7-8BF0-AD32D2651C13 - adfd4a0f5645d9d1"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 @Swift.MainActor () -&gt; () in tachiyomi.MangaPreviewCell.reconfigureImage(from: Swift.String) -&gt; ()"
+                  moduleName = "tachiyomi"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/muyu/Dev/mine/tachiyomi-copycat/ios/tachiyomi/tachiyomi/Features/Library/View/MangaPreviewCell.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "81"
+                  endingLineNumber = "81"
+                  offsetFromSymbolStart = "864">
                </Location>
             </Locations>
          </BreakpointContent>

@@ -20,10 +20,8 @@ class MangaPreviewCell: UICollectionViewCell, BaseCell {
             guard let manga = manga else { return }
             titleLabel.text = manga.title
             titleLabel.numberOfLines = 0
-            DispatchQueue.main.async { [weak self] in
-                guard let self = self else { return }
-                self.imageView.kf.setImage(with: URL(string: manga.thumbnailURL ?? ""),
-                                           placeholder: UIImage(systemName: Icons.squareFill))
+            if let thumbnailURL = manga.thumbnailURL {
+                reconfigureImage(from: thumbnailURL)
             }
         }
     }
@@ -72,6 +70,24 @@ extension MangaPreviewCell {
         }
         titleLabel.snp.remakeConstraints { make in
             make.leading.trailing.bottom.equalTo(contentView.layoutMarginsGuide)
+        }
+    }
+    private func reconfigureImage(from imageURL: String) {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self, let urlScheme = imageURL.getURLScheme() else { return }
+            switch urlScheme {
+            case .local:
+                let fileURL = URL(fileURLWithPath: imageURL)
+                if let imageData = try? Data(contentsOf: fileURL) {
+                    self.imageView.image = UIImage(data: imageData)
+                }
+            case .remote:
+                if let url = URL(string: imageURL) {
+                    self.imageView.kf.setImage(with: url, placeholder: UIImage(systemName: Icons.squareFill))
+                }
+            case .unknown:
+                return
+            }
         }
     }
 }

@@ -19,12 +19,10 @@ class LibraryViewModel: Base.ViewModel {
 extension LibraryViewModel {
     func reloadData() {
         isLoading.accept(true)
-        Task {
-            let fetchedMangas = await LocalStorage.shared.getLibraryMangas()
-            sourceMangas.accept(fetchedMangas)
-            filteredMangas.accept(fetchedMangas)
-            isLoading.accept(false)
-        }
+        let fetchedMangas = LocalStorage.shared.getLibraryMangas()
+        sourceMangas.accept(fetchedMangas)
+        filteredMangas.accept(fetchedMangas)
+        isLoading.accept(false)
     }
     func getNumberOfLibraryMangas() -> Int {
         return LocalStorage.shared.getNumberOfLibraryMangas()
@@ -43,7 +41,7 @@ extension LibraryViewModel {
         filteredMangas.accept(result)
     }
     func deleteMangaFromLibrary(at indexPath: IndexPath) {
-        guard let mangaURL = filteredMangas.value[indexPath.row].url else { return }
+        let mangaURL = filteredMangas.value[indexPath.row].url
         guard let indexToRemove = sourceMangas.value.firstIndex(where: { $0.url == mangaURL }) else { return }
         var mangas = sourceMangas.value
         mangas.remove(at: indexToRemove)

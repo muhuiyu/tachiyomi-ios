@@ -156,20 +156,20 @@ class SenManga: ParsedHTTPSource {
             
             var pages = [ChapterPage]()
             
-            let numberOfPrefetchedItems = numberOfPages > 5 ? 5 : numberOfPages
-            
-            // Sen Manga has one extra logo page at the end of each chapter, so we remove the last page
-            for i in 1..<numberOfPages {
-                let pageURL = chapterURL + "/\(i)"
-                // prefetch first 5 pages and add empty pages to the rest
-                if i <= numberOfPrefetchedItems {
-                    if let page = await refetchChapterPage(from: pageURL, at: i) {
+            try await withThrowingTaskGroup(of: (ChapterPage?).self) { group in
+                for i in 1..<numberOfPages {
+                    let pageURL = chapterURL + "/\(i)"
+                    group.addTask {
+                        return await self.refetchChapterPage(from: pageURL, at: i)
+                    }
+                }
+                for try await page in group {
+                    if let page = page {
                         pages.append(page)
                     }
-                } else {
-                    pages.append(ChapterPage(pageURL: pageURL, pageNumber: i))
                 }
             }
+            pages.sort(by: { $0.pageNumber < $1.pageNumber })
             return .success(pages)
             
         } catch {

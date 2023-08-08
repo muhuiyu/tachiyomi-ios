@@ -36,6 +36,8 @@
 		E44FD1752A814BBE000D4D6A /* VizShonenJump.swift in Sources */ = {isa = PBXBuildFile; fileRef = E44FD1742A814BBE000D4D6A /* VizShonenJump.swift */; };
 		E44FD1772A814D5E000D4D6A /* Viz.swift in Sources */ = {isa = PBXBuildFile; fileRef = E44FD1762A814D5E000D4D6A /* Viz.swift */; };
 		E44FD1792A814D65000D4D6A /* VizManga.swift in Sources */ = {isa = PBXBuildFile; fileRef = E44FD1782A814D65000D4D6A /* VizManga.swift */; };
+		E44FD17C2A8177F4000D4D6A /* AHDownloadButton in Frameworks */ = {isa = PBXBuildFile; productRef = E44FD17B2A8177F4000D4D6A /* AHDownloadButton */; };
+		E44FD17E2A819033000D4D6A /* ScrollToTopButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E44FD17D2A819033000D4D6A /* ScrollToTopButton.swift */; };
 		E46B12742A7C40E7003E4C1D /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = E46B12732A7C40E7003E4C1D /* RxCocoa */; };
 		E46B12762A7C40E7003E4C1D /* RxRelay in Frameworks */ = {isa = PBXBuildFile; productRef = E46B12752A7C40E7003E4C1D /* RxRelay */; };
 		E46B12782A7C40E7003E4C1D /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = E46B12772A7C40E7003E4C1D /* RxSwift */; };
@@ -78,6 +80,7 @@
 		E46B12EC2A7DAE48003E4C1D /* ReaderPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E46B12EB2A7DAE48003E4C1D /* ReaderPageViewController.swift */; };
 		E46B12EF2A7DB728003E4C1D /* BrowseSourceCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E46B12EE2A7DB728003E4C1D /* BrowseSourceCell.swift */; };
 		E46B12F12A7DBE1E003E4C1D /* ReaderNoPageFoundViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E46B12F02A7DBE1E003E4C1D /* ReaderNoPageFoundViewController.swift */; };
+		E46E97CA2A81F41500D1BDB0 /* ComicK.swift in Sources */ = {isa = PBXBuildFile; fileRef = E46E97C92A81F41500D1BDB0 /* ComicK.swift */; };
 		E4C27C5D2A7E2F1F00372B8D /* Ganma.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4C27C5C2A7E2F1F00372B8D /* Ganma.swift */; };
 		E4C27C5F2A7E984700372B8D /* ConfigurableSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4C27C5E2A7E984700372B8D /* ConfigurableSource.swift */; };
 		E4C27C632A7F2DCE00372B8D /* Booklife.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4C27C622A7F2DCE00372B8D /* Booklife.swift */; };
@@ -126,6 +129,7 @@
 		E44FD1742A814BBE000D4D6A /* VizShonenJump.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VizShonenJump.swift; sourceTree = "<group>"; };
 		E44FD1762A814D5E000D4D6A /* Viz.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Viz.swift; sourceTree = "<group>"; };
 		E44FD1782A814D65000D4D6A /* VizManga.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VizManga.swift; sourceTree = "<group>"; };
+		E44FD17D2A819033000D4D6A /* ScrollToTopButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollToTopButton.swift; sourceTree = "<group>"; };
 		E46B127D2A7C4185003E4C1D /* LocalStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalStorage.swift; sourceTree = "<group>"; };
 		E46B12862A7C423D003E4C1D /* MainTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabBarController.swift; sourceTree = "<group>"; };
 		E46B128A2A7C4889003E4C1D /* YearMonth.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = YearMonth.swift; sourceTree = "<group>"; };
@@ -162,6 +166,7 @@
 		E46B12EB2A7DAE48003E4C1D /* ReaderPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReaderPageViewController.swift; sourceTree = "<group>"; };
 		E46B12EE2A7DB728003E4C1D /* BrowseSourceCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowseSourceCell.swift; sourceTree = "<group>"; };
 		E46B12F02A7DBE1E003E4C1D /* ReaderNoPageFoundViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReaderNoPageFoundViewController.swift; sourceTree = "<group>"; };
+		E46E97C92A81F41500D1BDB0 /* ComicK.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComicK.swift; sourceTree = "<group>"; };
 		E4C27C5C2A7E2F1F00372B8D /* Ganma.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ganma.swift; sourceTree = "<group>"; };
 		E4C27C5E2A7E984700372B8D /* ConfigurableSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurableSource.swift; sourceTree = "<group>"; };
 		E4C27C622A7F2DCE00372B8D /* Booklife.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Booklife.swift; sourceTree = "<group>"; };
@@ -187,6 +192,7 @@
 				E46B12782A7C40E7003E4C1D /* RxSwift in Frameworks */,
 				E46B127B2A7C40FE003E4C1D /* SnapKit in Frameworks */,
 				E46B12762A7C40E7003E4C1D /* RxRelay in Frameworks */,
+				E44FD17C2A8177F4000D4D6A /* AHDownloadButton in Frameworks */,
 				E46B12742A7C40E7003E4C1D /* RxCocoa in Frameworks */,
 				E46B12CE2A7C6C3F003E4C1D /* SwiftSoup in Frameworks */,
 			);
@@ -542,6 +548,7 @@
 			children = (
 				E46B12BC2A7C55FA003E4C1D /* SourceManga.swift */,
 				E46B12D52A7CC3D6003E4C1D /* SourceChapter.swift */,
+				E44FD17D2A819033000D4D6A /* ScrollToTopButton.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -621,6 +628,7 @@
 				E44FD1762A814D5E000D4D6A /* Viz.swift */,
 				E44FD1742A814BBE000D4D6A /* VizShonenJump.swift */,
 				E44FD1782A814D65000D4D6A /* VizManga.swift */,
+				E46E97C92A81F41500D1BDB0 /* ComicK.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -649,6 +657,7 @@
 				E46B12CD2A7C6C3F003E4C1D /* SwiftSoup */,
 				E46B12D02A7C7D10003E4C1D /* Kingfisher */,
 				E4D1C0A72A8081CC00BFF1A4 /* SkeletonView */,
+				E44FD17B2A8177F4000D4D6A /* AHDownloadButton */,
 			);
 			productName = tachiyomi;
 			productReference = E44E2AE22A7C390000669192 /* tachiyomi.app */;
@@ -684,6 +693,7 @@
 				E46B12CC2A7C6C3F003E4C1D /* XCRemoteSwiftPackageReference "SwiftSoup" */,
 				E46B12CF2A7C7D10003E4C1D /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				E4D1C0A62A8081CC00BFF1A4 /* XCRemoteSwiftPackageReference "SkeletonView" */,
+				E44FD17A2A8177F4000D4D6A /* XCRemoteSwiftPackageReference "AHDownloadButton" */,
 			);
 			productRefGroup = E44E2AE32A7C390000669192 /* Products */;
 			projectDirPath = "";
@@ -765,6 +775,7 @@
 				E44E2B532A7C396900669192 /* UIFont+Theme.swift in Sources */,
 				E44E2AE62A7C390000669192 /* AppDelegate.swift in Sources */,
 				E44E2B572A7C396900669192 /* ViewController.swift in Sources */,
+				E44FD17E2A819033000D4D6A /* ScrollToTopButton.swift in Sources */,
 				E4D1C0AA2A809EE700BFF1A4 /* ComicDays.swift in Sources */,
 				E46B12C72A7C625A003E4C1D /* SenManga.swift in Sources */,
 				E46B12902A7C4957003E4C1D /* LibraryViewController.swift in Sources */,
@@ -781,6 +792,7 @@
 				E44E2B592A7C396900669192 /* UIImageView+loadImageUsingURL.swift in Sources */,
 				E44FD1752A814BBE000D4D6A /* VizShonenJump.swift in Sources */,
 				E46B12E82A7DA38B003E4C1D /* ChapterPage.swift in Sources */,
+				E46E97CA2A81F41500D1BDB0 /* ComicK.swift in Sources */,
 				E46B12C52A7C61A9003E4C1D /* MangasPage.swift in Sources */,
 				E44E2B612A7C396900669192 /* UINavigationController+Extensions.swift in Sources */,
 				E46B12F12A7DBE1E003E4C1D /* ReaderNoPageFoundViewController.swift in Sources */,
@@ -998,6 +1010,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		E44FD17A2A8177F4000D4D6A /* XCRemoteSwiftPackageReference "AHDownloadButton" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/amerhukic/AHDownloadButton";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
 		E46B12722A7C40E7003E4C1D /* XCRemoteSwiftPackageReference "RxSwift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ReactiveX/RxSwift";
@@ -1041,6 +1061,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		E44FD17B2A8177F4000D4D6A /* AHDownloadButton */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E44FD17A2A8177F4000D4D6A /* XCRemoteSwiftPackageReference "AHDownloadButton" */;
+			productName = AHDownloadButton;
+		};
 		E46B12732A7C40E7003E4C1D /* RxCocoa */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = E46B12722A7C40E7003E4C1D /* XCRemoteSwiftPackageReference "RxSwift" */;

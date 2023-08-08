@@ -19,17 +19,25 @@ extension String {
     }
 }
 
+// MARK: - URL
 extension String {
-    func image() -> UIImage? {
-        let size = CGSize(width: 48, height: 48)
-        UIGraphicsBeginImageContextWithOptions(size, false, 0)
-        UIColor.clear.set()
-        let rect = CGRect(origin: .zero, size: size)
-        UIRectFill(CGRect(origin: .zero, size: size))
-        (self as AnyObject).draw(in: rect, withAttributes: [.font: UIFont.systemFont(ofSize: 40)])
-        let image = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-        return image
+    enum URLScheme {
+        case local
+        case remote
+        case unknown
+    }
+    func getURLScheme() -> URLScheme? {
+        // If urlString starts with '/', it's likely a local path, so add 'file://' prefix
+        let usableURLString = self.hasPrefix("/") ? "file://\(self)" : self
+        guard let url = URL(string: usableURLString) else { return nil }
+        switch url.scheme {
+        case "http", "https":
+            return .remote
+        case "file":
+            return .local
+        default:
+            return .unknown
+        }
     }
 }
 

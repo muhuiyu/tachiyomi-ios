@@ -125,7 +125,12 @@ extension ReaderViewModel {
 // MARK: - Private methods
 extension ReaderViewModel {
     private func reloadData() {
+        // Check if chapter has been saved in app
+        if willRestoreSavedChapter() { return }
+        
+        // If not, fetch data
         guard let chapter = chapter.value, let provider = SourceRegistry.getProvider(for: sourceID) else { return }
+        
         Task {
             let result = await provider.getChapterPages(from: chapter)
             switch result {
@@ -170,6 +175,43 @@ extension ReaderViewModel {
                 self?.reloadData()
             }
             .disposed(by: disposeBag)
+    }
+    
+    /// Check if there's images stored in the path, return yes if there's image
+    private func willRestoreSavedChapter() -> Bool {
+        guard let chapter = chapter.value, let path = chapter.getLocalStoragePath() else { return false }
+        
+        print(path)
+        var isDirectory = ObjCBool(false)
+        let directoryExists = FileManager.default.fileExists(atPath: path.path, isDirectory: &isDirectory)
+        if !directoryExists || !isDirectory.boolValue {
+            return false
+        }
+        
+        // Try to get the array of files in directory
+        let files: [String]
+        do {
+            files = try FileManager.default.contentsOfDirectory(atPath: path.path)
+        } catch {
+            print("Error while enumerating files \(path): \(error.localizedDescription)")
+            return false
+        }
+
+        // Check if there are any image files
+        let imageFiles = files.filter({ $0.hasSuffix(".png") || $0.hasSuffix(".jpg") || $0.hasSuffix(".jpeg") })
+        if imageFiles.isEmpty {
+            return false
+        }
+        // Add images to pages
+        let savedPages: [ChapterPage] = imageFiles.compactMap { file in
+            let imageURL = path.appendingPathComponent(file).path
+            print(imageURL)
+            guard let pageNumberString = file.components(separatedBy: ".").first, let pageNumber = Int(pageNumberString) else { return nil }
+            return ChapterPage(pageURL: imageURL, pageNumber: pageNumber, imageURL: imageURL)
+        }.sorted(by: { $0.pageNumber < $1.pageNumber })
+        pages.accept(savedPages)
+        return true
+        
     }
 }
 

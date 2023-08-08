@@ -55,8 +55,8 @@ extension SourceViewModel {
         }
     }
     func addMangaToLibary(at indexPath: IndexPath) {
-        guard let mangaURL = sourceMangas.value[indexPath.row].url else { return }
-        LocalStorage.shared.addToLibrary(for: mangaURL, from: sourceID)
+        let manga = sourceMangas.value[indexPath.row]
+        LocalStorage.shared.addToLibrary(for: manga, from: sourceID)
     }
 }
 
