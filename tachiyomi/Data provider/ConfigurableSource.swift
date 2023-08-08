@@ -39,7 +39,16 @@ class ConfigurableSource: SourceProtocol {
     }
     
     func getPopularManga(at page: Int) async -> MangaPage {
-        fatalError("Not implemented")
+        guard let request = getPopularMangaRequest(at: page) else {
+            return MangaPage(mangas: [], hasNextPage: false)
+        }
+        do {
+            let (data, _) = try await URLSession.shared.data(for: request)
+            return parsePopularMangas(from: data)
+        } catch {
+            print("An error occurred: \(error)")
+            return MangaPage(mangas: [], hasNextPage: false)
+        }
     }
     
     func getManga(from urlString: String) async -> SourceManga? {
@@ -70,7 +79,16 @@ class ConfigurableSource: SourceProtocol {
         fatalError("Not implemented")
     }
     func searchMangas(for query: String, at page: Int) async -> MangaPage {
-        fatalError("Not implemented")
+        guard let request = getSearchMangaRequest(for: query, at: page) else {
+            return MangaPage(mangas: [], hasNextPage: false)
+        }
+        do {
+            let (data, _) = try await URLSession.shared.data(for: request)
+            return parseMangaSearchResult(from: data)
+        } catch {
+            print("An error occurred: \(error)")
+            return MangaPage(mangas: [], hasNextPage: false)
+        }
     }
     func getChapterPages(from chapter: SourceChapter) async -> Result<[ChapterPage], Error> {
         guard let request = await getChapterPagesRequest(from: chapter) else { return .failure(SourceError.noPageFound) }
@@ -92,7 +110,7 @@ class ConfigurableSource: SourceProtocol {
     func getPopularMangaRequest(at page: Int) -> URLRequest? {
         fatalError("Not implemented")
     }
-    func parsePopularManga(from data: Data) -> [SourceManga] {
+    func parsePopularMangas(from data: Data) -> MangaPage {
         fatalError("Not implemented")
     }
     func getSearchMangaRequest(for query: String, at page: Int) -> URLRequest? {

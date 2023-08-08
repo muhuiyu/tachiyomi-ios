@@ -25,9 +25,7 @@ class Ganma: ConfigurableSource {
         }
         do {
             let (data, _) = try await URLSession.shared.data(for: request)
-            let mangas = parsePopularManga(from: data)
-            // Ganma doesn't have next page
-            return MangaPage(mangas: mangas, hasNextPage: false)
+            return parsePopularMangas(from: data)
         } catch {
             print("An error occurred: \(error)")
             return MangaPage(mangas: [], hasNextPage: false)
@@ -49,13 +47,15 @@ class Ganma: ConfigurableSource {
         return request
     }
     
-    override func parsePopularManga(from data: Data) -> [SourceManga] {
+    override func parsePopularMangas(from data: Data) -> MangaPage {
         do {
             let base = try JSONDecoder().decode(GanmaPopularMangasData.self, from: data)
-            return base.root.compactMap({ SourceManga(from: $0, url: getMangaURL(for: $0.alias)) })
+            let mangas = base.root.compactMap({ SourceManga(from: $0, url: getMangaURL(for: $0.alias)) })
+            // Ganma has no next page
+            return MangaPage(mangas: mangas, hasNextPage: false)
         } catch {
             print("Error in parsePopularManga: \(error.localizedDescription)")
-            return []
+            return MangaPage(mangas: [], hasNextPage: false)
         }
     }
     

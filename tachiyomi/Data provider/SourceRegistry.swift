@@ -23,26 +23,36 @@ class SourceRegistry {
         ComicKEN.id: ComicKEN(),
         ComicKZHHK.id: ComicKZHHK(),
         ComicKVI.id: ComicKVI(),
-        
     ]
+    
     static func getProvider(for sourceID: String) -> SourceProtocol? {
         return sourceIDToProviderDictionary[sourceID]
     }
     
-    // TODO: - Change to check it automatically
-    struct LanguageGroupedSourceIDs {
-        let language: Language
-        var sourceIDs: [String]
+    static func getRecentGroups() -> [LanguageGroupedSourceIDs] {
+        return getGroups(for: LocalStorage.shared.getRecentSourceIDs())
     }
-    static var groupedSourceIDsByLanguage: [LanguageGroupedSourceIDs] {
-        var list = [LanguageGroupedSourceIDs]()
-        sourceIDToProviderDictionary.forEach { (key, value) in
-            if let index = list.firstIndex(where: { $0.language == value.language }) {
-                list[index].sourceIDs.append(key)
-            } else {
-                list.append(LanguageGroupedSourceIDs(language: value.language, sourceIDs: [key]))
+    
+    static func getAllGroups() -> [LanguageGroupedSourceIDs] {
+        return getGroups(for: SourceRegistry.allSourceIDs)
+    }
+    
+    static func getGroups(for ids: [String]) -> [LanguageGroupedSourceIDs] {
+        var grouped = [Language: [String]]()
+        ids.forEach { sourceID in
+            if let language = sourceIDToProviderDictionary[sourceID]?.language {
+                if grouped[language] != nil {
+                    grouped[language]?.append(sourceID)
+                } else {
+                    grouped[language] = [sourceID]
+                }
             }
         }
-        return list
+        return grouped.map { LanguageGroupedSourceIDs(language: $0.key, sourceIDs: $0.value) }
     }
+}
+
+struct LanguageGroupedSourceIDs {
+    let language: Language
+    var sourceIDs: [String]
 }

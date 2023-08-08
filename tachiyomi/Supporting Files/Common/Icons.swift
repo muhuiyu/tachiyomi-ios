@@ -25,6 +25,7 @@ class Icons {
     static var plus: String { "plus" }
     static var eyeglasses: String { "eyeglasses" }
     static var globe: String { "globe" }
+    static var trashFill: String { "trash.fill" }
     static var sparkle: String { "sparkle" }
     static var sparkles: String { "sparkles" }
     static var cursorarrowRays: String { "cursorarrow.rays" }

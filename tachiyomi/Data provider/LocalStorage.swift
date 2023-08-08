@@ -20,6 +20,9 @@ class LocalStorage {
     // for chapters
     // chapterURL: pageNumber
     static var lastReadChapterPageKey: String { "k_last_read_chapter_page" }
+    
+    // Sources
+    static var recentSourceIDsKey: String { "k_recent_source_ids" }
 }
 
 // MARK: - Library
@@ -65,6 +68,10 @@ extension LocalStorage {
             createDirectoryIfNeeded(for: manga)
             await downloadMangaThumbnailIfNeeded(as: imagePath, for: manga.thumbnailURL)
         }
+        
+        // Avoid duplicated manga
+        if mangas.contains(where: { $0.mangaURL == manga.url }) { return }
+        
         mangas.insert(LibraryManga(sourceID: sourceID, mangaURL: manga.url, title: mangaTitle, thumbnailImagePath: imagePath.path), at: 0)
         if let encoded = try? JSONEncoder().encode(mangas) {
             UserDefaults.standard.set(encoded, forKey: LocalStorage.libraryMangaURLsKey)
@@ -136,5 +143,32 @@ extension LocalStorage {
         }
         dictionary[chapterURL] = pageNumber
         UserDefaults.standard.set(dictionary, forKey: LocalStorage.lastReadChapterPageKey)
+    }
+}
+
+// MARK: - Sources
+extension LocalStorage {
+    func getRecentSourceIDs() -> [String] {
+        if let recentSourceIDs = UserDefaults.standard.object(forKey: LocalStorage.recentSourceIDsKey) as? [String] {
+            return recentSourceIDs
+        }
+        return []
+    }
+    func saveSourceID(for id: String) {
+        var ids = [String]()
+        if let savedSourceIDs = UserDefaults.standard.object(forKey: LocalStorage.recentSourceIDsKey) as? [String] {
+            ids = savedSourceIDs
+        }
+        // Avoid duplicated ids
+        if ids.contains(id) { return }
+        
+        ids.append(id)
+        UserDefaults.standard.set(ids, forKey: LocalStorage.recentSourceIDsKey)
+    }
+    func unsaveSourceID(for id: String) {
+        if var savedSourceIDs = UserDefaults.standard.object(forKey: LocalStorage.recentSourceIDsKey) as? [String] {
+            savedSourceIDs.removeAll(where: { $0 == id })
+            UserDefaults.standard.set(savedSourceIDs, forKey: LocalStorage.recentSourceIDsKey)
+        }
     }
 }

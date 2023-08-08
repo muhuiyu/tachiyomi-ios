@@ -60,22 +60,6 @@ class ComicK: ConfigurableSource {
         }
     }
     
-    // MARK: - Popular manga
-    override func getPopularManga(at page: Int) async -> MangaPage {
-        guard let request = getPopularMangaRequest(at: page) else {
-            return MangaPage(mangas: [], hasNextPage: false)
-        }
-        do {
-            let (data, _) = try await URLSession.shared.data(for: request)
-            let mangas = parsePopularManga(from: data)
-            // ComicK doesn't have next page
-            return MangaPage(mangas: mangas, hasNextPage: false)
-        } catch {
-            print("An error occurred: \(error)")
-            return MangaPage(mangas: [], hasNextPage: false)
-        }
-    }
-    
     override func getPopularMangaRequest(at page: Int) -> URLRequest? {
         guard let url = URL(string: "\(baseURL)/top") else { return nil }
         var request = URLRequest(url: url)
@@ -84,13 +68,15 @@ class ComicK: ConfigurableSource {
         return request
     }
     
-    override func parsePopularManga(from data: Data) -> [SourceManga] {
+    override func parsePopularMangas(from data: Data) -> MangaPage {
         do {
             let base = try JSONDecoder().decode(ComicKPopularMangasData.self, from: data)
-            return base.rank.compactMap({ SourceManga(from: $0, url: getMangaURL(for: $0.slug), sourceID: sourceID) })
+            let mangas = base.rank.compactMap({ SourceManga(from: $0, url: getMangaURL(for: $0.slug), sourceID: sourceID) })
+            // ComicK has no next page
+            return MangaPage(mangas: mangas, hasNextPage: false)
         } catch {
             print("Error in parsePopularManga: \(error.localizedDescription)")
-            return []
+            return MangaPage(mangas: [], hasNextPage: false)
         }
     }
 
@@ -98,16 +84,25 @@ class ComicK: ConfigurableSource {
     override func getSearchMangaRequest(for query: String, at page: Int) -> URLRequest? {
         // Example:
         // https://api.comick.app/v1.0/search?q=hachimitsu-ni-hatsuko&t=true
-        guard let url = URL(string: "\(baseURL)/v1.0/search") else { return nil }
-        var request = URLRequest(url: url)
-        request.addValue(query, forHTTPHeaderField: "q")
-        request.addValue("true", forHTTPHeaderField: "t")
-        return request
+        guard var urlComponents = URLComponents(string: "\(baseURL)/v1.0/search") else { return nil }
+        urlComponents.queryItems = [
+            URLQueryItem(name: "q", value: query),
+            URLQueryItem(name: "t", value: "true")
+        ]
+        guard let url = urlComponents.url else { return nil }
+        return URLRequest(url: url)
     }
     
-    override func parseSearchedManga(from data: Data) -> SourceManga? {
-        // TODO: -
-        return nil
+    override func parseMangaSearchResult(from data: Data) -> MangaPage {
+        do {
+            let listData = try JSONDecoder().decode([ComicMangaOverviewData].self, from: data)
+            let mangas = listData.map({ SourceManga(from: $0, url: getMangaURL(for: $0.slug), sourceID: sourceID) })
+            // ComicK has no next page
+            return MangaPage(mangas: mangas, hasNextPage: false)
+        } catch {
+            print("Error in parseMangaSearchResult: \(error.localizedDescription)")
+            return MangaPage(mangas: [], hasNextPage: false)
+        }
     }
 
     // MARK: - Get manga

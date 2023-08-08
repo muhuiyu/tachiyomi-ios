@@ -9,12 +9,16 @@ import UIKit
 
 class BrowseViewController: Base.MVVMViewController<BrowseViewModel> {
     // MARK: - Views
+    private let segmentControl = UISegmentedControl(items: ["Recent", "All"])
     private let tableView = UITableView(frame: .zero, style: .insetGrouped)
     
     override func viewDidLoad() {
         super.viewDidLoad()
         configureViews()
         configureConstraints()
+        configureBindings()
+        
+        viewModel.updateSources(to: .recent)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -27,14 +31,21 @@ class BrowseViewController: Base.MVVMViewController<BrowseViewModel> {
 extension BrowseViewController {
     private func configureViews() {
         configureNavigationBar()
+        segmentControl.selectedSegmentIndex = 0
+        segmentControl.addTarget(self, action: #selector(didChangeIndex(_:)), for: .valueChanged)
+        view.addSubview(segmentControl)
         tableView.register(BrowseSourceCell.self, forCellReuseIdentifier: BrowseSourceCell.reuseID)
         tableView.dataSource = self
         tableView.delegate = self
         view.addSubview(tableView)
     }
     private func configureConstraints() {
+        segmentControl.snp.remakeConstraints { make in
+            make.top.leading.trailing.equalTo(view.layoutMarginsGuide)
+        }
         tableView.snp.remakeConstraints { make in
-            make.edges.equalTo(view.safeAreaLayoutGuide)
+            make.top.equalTo(segmentControl.snp.bottom).offset(Constants.Spacing.medium)
+            make.leading.trailing.bottom.equalTo(view.safeAreaLayoutGuide)
         }
     }
     private func configureNavigationBar() {
@@ -44,6 +55,16 @@ extension BrowseViewController {
                                             action: #selector(didTapFilter))
         navigationItem.rightBarButtonItem = filterBarItem
     }
+    private func configureBindings() {
+        viewModel.sections
+            .asObservable()
+            .subscribe { _ in
+                DispatchQueue.main.async { [weak self] in
+                    self?.tableView.reloadData()
+                }
+            }
+            .disposed(by: disposeBag)
+    }
 }
 
 // MARK: - Handlers
@@ -51,6 +72,17 @@ extension BrowseViewController {
     @objc
     private func didTapFilter() {
         // TODO: -
+    }
+    @objc
+    private func didChangeIndex(_ sender: UISegmentedControl) {
+        switch sender.selectedSegmentIndex {
+        case 0:
+            viewModel.updateSources(to: .recent)
+        case 1:
+            viewModel.updateSources(to: .all)
+        default:
+            break
+        }
     }
 }
 
@@ -83,5 +115,22 @@ extension BrowseViewController: UITableViewDataSource, UITableViewDelegate {
                                                          viewModel: sourceViewModel,
                                                          sourceID: sourceID)
         navigationController?.pushViewController(viewController, animated: true)
+        
+        if viewModel.mode == .all {
+            // Save source to recent used
+            viewModel.saveSource(at: indexPath)
+        }
+    }
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        guard viewModel.mode == .recent else { return nil }
+        let destructiveAction = UIContextualAction(style: .destructive, title: "Remove from list") { [weak self] (_, _, _) in
+            self?.viewModel.unsaveSource(at: indexPath)
+            DispatchQueue.main.async {
+                self?.tableView.reloadData()
+            }
+        }
+        destructiveAction.image = UIImage(systemName: Icons.trashFill)
+        let configuration = UISwipeActionsConfiguration(actions: [destructiveAction])
+        return configuration
     }
 }
