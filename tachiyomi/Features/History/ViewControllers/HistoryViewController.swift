@@ -13,3 +13,10 @@ class HistoryViewController: Base.MVVMViewController<HistoryViewModel> {
         tabBarController?.tabBar.isHidden = false
     }
 }
+
+// mangaURL, chapterURL, date, mangatitle, manga delete
+// Date (relative)
+// ---------------
+//       | title
+// image |                      | deleteButton
+//       | chapterName time
