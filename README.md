@@ -15,8 +15,8 @@ The app is structured with five main tabs, each serving a unique purpose:
 
 ## Ongoing Development
 The project is actively being developed, with the following key features currently in progress:
-- [] Updates, History, and Account Tabs: Enhancing these sections with additional functionalities ad user interface improvements.
-- [] Download Manga Locally: Implementing offline reading capabilities by allowing users to download manga chapters to their device.
+- [ ] Updates, History, and Account Tabs: Enhancing these sections with additional functionalities ad user interface improvements.
+- [ ] Download Manga Locally: Implementing offline reading capabilities by allowing users to download manga chapters to their device.
 
 ## Technology Stack
 - Swift
