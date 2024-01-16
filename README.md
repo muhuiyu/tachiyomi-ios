@@ -2,8 +2,8 @@
 iOS version of Tachiyomi app (https://tachiyomi.org/)
 
 ## TODO
-- Updates, History, Account pages
-- Download manga to local
+- [ ] Updates, History, Account pages
+- [ ] Download manga to local
 
 ## Screenshot
 ![IMG_1070](https://github.com/muhuiyu/tachiyomi-ios/assets/42035587/b62ae74a-baf6-4426-bff1-e8bdeb6c1eae)
